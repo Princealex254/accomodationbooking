@@ -1,0 +1,2496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Prince Alex Airbnb</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Poppins', sans-serif; line-height: 1.6; color: #333; background: #f5f7fa; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 0 20px; }
+        
+        /* Navigation */
+        .navbar { position: fixed; top: 0; width: 100%; background: linear-gradient(135deg, #1a365d, #2d5a87); z-index: 1000; padding: 1rem 0; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); }
+        .nav-container { max-width: 1400px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; }
+        .nav-logo h2 { font-family: 'Montserrat', sans-serif; color: white; font-size: 1.5rem; font-weight: 600; }
+        .nav-logo span { color: #d4af37; font-size: 0.9rem; font-weight: 400; }
+        .admin-nav { display: flex; align-items: center; gap: 2rem; }
+        .nav-link { text-decoration: none; color: rgba(255, 255, 255, 0.9); font-weight: 500; transition: color 0.3s ease; }
+        .nav-link:hover { color: #d4af37; }
+        .user-info { color: rgba(255, 255, 255, 0.9); font-weight: 500; }
+        .logout-btn { background: rgba(255, 255, 255, 0.1); color: white; padding: 0.5rem 1.5rem; border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 25px; cursor: pointer; transition: all 0.3s ease; font-family: 'Poppins', sans-serif; }
+        .logout-btn:hover { background: rgba(255, 255, 255, 0.2); transform: translateY(-2px); }
+        
+        /* Main Layout */
+        .admin-layout { margin-top: 80px; display: grid; grid-template-columns: 250px 1fr; gap: 2rem; padding: 2rem 0; min-height: calc(100vh - 80px); }
+        .sidebar { background: white; border-radius: 15px; padding: 2rem; box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08); height: fit-content; position: sticky; top: 100px; }
+        .main-content { background: white; border-radius: 15px; padding: 2rem; box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08); min-height: 600px; }
+        
+        /* Sidebar */
+        .sidebar-header { text-align: center; margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid #e9ecef; }
+        .sidebar-avatar { width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #d4af37, #b8941f); display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; color: white; font-size: 2rem; font-weight: 600; }
+        .sidebar-title { font-size: 1.1rem; font-weight: 600; color: #1a365d; }
+        .sidebar-subtitle { font-size: 0.9rem; color: #666; }
+        
+        .sidebar-menu { list-style: none; }
+        .sidebar-menu li { margin-bottom: 0.5rem; }
+        .sidebar-menu button { width: 100%; text-align: left; background: none; border: none; padding: 1rem; border-radius: 10px; cursor: pointer; transition: all 0.3s ease; font-family: 'Poppins', sans-serif; font-size: 0.95rem; display: flex; align-items: center; gap: 0.8rem; color: #666; }
+        .sidebar-menu button:hover, .sidebar-menu button.active { background: linear-gradient(135deg, #d4af37, #b8941f); color: white; transform: translateX(5px); }
+        .menu-icon { font-size: 1.2rem; width: 20px; text-align: center; }
+        
+        /* Dashboard Stats */
+        .dashboard-header { margin-bottom: 2rem; }
+        .dashboard-title { font-size: 2rem; font-weight: 600; color: #1a365d; margin-bottom: 0.5rem; }
+        .dashboard-subtitle { color: #666; font-size: 1rem; }
+        
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 3rem; }
+        .stat-card { background: linear-gradient(135deg, #fff, #f8f9fa); padding: 2rem; border-radius: 15px; border-left: 4px solid #d4af37; transition: all 0.3s ease; position: relative; overflow: hidden; }
+        .stat-card::before { content: ''; position: absolute; top: 0; right: 0; width: 100px; height: 100px; background: linear-gradient(135deg, rgba(212, 175, 55, 0.1), rgba(212, 175, 55, 0.05)); border-radius: 50%; transform: translate(30px, -30px); }
+        .stat-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); }
+        .stat-header { display: flex; justify-content: between; align-items: center; margin-bottom: 1rem; }
+        .stat-icon { font-size: 2.5rem; color: #d4af37; }
+        .stat-number { font-size: 2rem; font-weight: 700; color: #1a365d; margin-bottom: 0.5rem; }
+        .stat-label { color: #666; font-size: 0.9rem; font-weight: 500; }
+        .stat-change { font-size: 0.8rem; color: #28a745; font-weight: 500; }
+        
+        /* Content Sections */
+        .content-section { display: none; }
+        .content-section.active { display: block; }
+        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
+        .section-title { font-size: 1.5rem; font-weight: 600; color: #1a365d; }
+        
+        /* Search and Controls */
+        .controls-bar { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; margin-bottom: 2rem; }
+        .search-input { flex: 1; min-width: 250px; padding: 0.8rem 1rem; border: 2px solid #e9ecef; border-radius: 10px; font-size: 1rem; transition: all 0.3s ease; }
+        .search-input:focus { outline: none; border-color: #d4af37; box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1); }
+        .filter-select { padding: 0.8rem 1rem; border: 2px solid #e9ecef; border-radius: 10px; font-size: 1rem; background: white; cursor: pointer; }
+        .export-btn, .add-btn { background: linear-gradient(135deg, #28a745, #20c997); color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 10px; cursor: pointer; font-weight: 500; transition: all 0.3s ease; display: flex; align-items: center; gap: 0.5rem; }
+        .export-btn:hover, .add-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3); }
+        
+        /* Tables */
+        .table-container { background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); overflow-x: auto; }
+        .data-table { width: 100%; border-collapse: collapse; min-width: 1000px; }
+        .data-table th { background: linear-gradient(135deg, #f8f9fa, #e9ecef); padding: 0.8rem; text-align: left; font-weight: 600; color: #1a365d; border-bottom: 2px solid #e9ecef; font-size: 0.9rem; }
+        .data-table td { padding: 0.8rem; border-bottom: 1px solid #f8f9fa; font-size: 0.9rem; }
+        .data-table tbody tr { transition: all 0.3s ease; }
+        .data-table tbody tr:hover { background: #f8f9fa; }
+        .data-table tbody tr:last-child td { border-bottom: none; }
+        .data-table td a { color: #d4af37; text-decoration: none; font-weight: 500; }
+        .data-table td a:hover { text-decoration: underline; }
+        .guest-info { max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        
+        /* Status Badges */
+        .status-badge { padding: 0.4rem 0.8rem; border-radius: 20px; font-size: 0.8rem; font-weight: 500; text-transform: capitalize; }
+        .status-confirmed { background: #d4edda; color: #155724; }
+        .status-pending { background: #fff3cd; color: #856404; }
+        .status-cancelled { background: #f8d7da; color: #721c24; }
+        .status-completed { background: #d1ecf1; color: #0c5460; }
+        
+        /* Action Buttons */
+        .action-buttons { display: flex; gap: 0.5rem; }
+        .action-btn { padding: 0.4rem 0.8rem; border: none; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: 500; transition: all 0.3s ease; }
+        .action-btn.view { background: #007bff; color: white; }
+        .action-btn.edit { background: #ffc107; color: #333; }
+        .action-btn.delete { background: #dc3545; color: white; }
+        .action-btn.approve { background: #28a745; color: white; }
+        .action-btn:hover { transform: translateY(-1px); opacity: 0.9; }
+        
+        /* Modals */
+        .modal { display: none; position: fixed; z-index: 10000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); backdrop-filter: blur(5px); }
+        .modal-content { position: relative; background-color: white; margin: 3% auto; padding: 0; width: 90%; max-width: 700px; border-radius: 15px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); animation: modalSlideIn 0.3s ease; overflow: hidden; }
+        .modal-header { background: linear-gradient(135deg, #1a365d, #2d5a87); color: white; padding: 2rem; }
+        .modal-title { font-size: 1.5rem; font-weight: 600; margin-bottom: 0.5rem; }
+        .modal-subtitle { opacity: 0.9; font-size: 0.95rem; }
+        .modal-body { padding: 2rem; max-height: 60vh; overflow-y: auto; }
+        .modal-footer { padding: 1.5rem 2rem; border-top: 1px solid #e9ecef; display: flex; gap: 1rem; justify-content: flex-end; }
+        .close-modal { position: absolute; top: 1rem; right: 1.5rem; font-size: 2rem; cursor: pointer; color: rgba(255, 255, 255, 0.8); transition: color 0.3s ease; }
+        .close-modal:hover { color: white; }
+        
+        /* Form Elements */
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label { display: block; font-weight: 500; color: #333; margin-bottom: 0.5rem; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 0.8rem; border: 2px solid #e9ecef; border-radius: 8px; font-size: 1rem; transition: all 0.3s ease; }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: #d4af37; box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1); }
+        
+        /* Buttons */
+        .btn { padding: 0.8rem 1.5rem; border: none; border-radius: 8px; cursor: pointer; font-weight: 500; transition: all 0.3s ease; font-family: 'Poppins', sans-serif; }
+        .btn-primary { background: linear-gradient(135deg, #d4af37, #b8941f); color: white; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3); }
+        .btn-secondary { background: #6c757d; color: white; }
+        .btn-secondary:hover { background: #5a6268; transform: translateY(-2px); }
+        .btn-danger { background: #dc3545; color: white; }
+        .btn-danger:hover { background: #c82333; transform: translateY(-2px); }
+        
+        /* Analytics Cards */
+        .analytics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
+        .analytics-card { background: linear-gradient(135deg, #fff, #f8f9fa); padding: 2rem; border-radius: 15px; border-left: 4px solid #d4af37; }
+        .analytics-card h4 { color: #1a365d; margin-bottom: 1rem; font-size: 1.2rem; }
+        .analytics-card .metric { font-size: 2rem; font-weight: 700; color: #d4af37; margin-bottom: 0.5rem; }
+        .analytics-card .description { color: #666; font-size: 0.9rem; line-height: 1.5; }
+        
+        /* Loading States */
+        .loading { text-align: center; padding: 3rem; color: #666; }
+        .loading::before { content: '⏳'; font-size: 2rem; display: block; margin-bottom: 1rem; }
+        
+        /* Empty States */
+        .empty-state { text-align: center; padding: 3rem; color: #666; }
+        .empty-state::before { content: '📭'; font-size: 3rem; display: block; margin-bottom: 1rem; }
+        
+        /* Login Required */
+        .login-required { display: none; flex-direction: column; align-items: center; justify-content: center; min-height: 80vh; padding: 2rem 0; }
+        .login-icon { font-size: 4rem; color: #d4af37; margin-bottom: 1rem; }
+        .login-required h2 { color: #1a365d; font-size: 2rem; margin-bottom: 1rem; }
+        .login-required p { color: #666; font-size: 1.1rem; margin-bottom: 2rem; max-width: 500px; }
+        
+        /* Admin Login Form Styles */
+        .form-group label { display: block; font-weight: 500; color: #333; margin-bottom: 0.5rem; font-size: 0.9rem; }
+        #admin-login-form input[type="email"]:focus, #admin-login-form input[type="password"]:focus { 
+            border-color: #d4af37 !important; 
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1) !important; 
+            transform: translateY(-2px);
+        }
+        #admin-login-form .btn-primary { 
+            background: linear-gradient(135deg, #d4af37, #b8941f); 
+            border: none; 
+            transition: all 0.3s ease;
+        }
+        #admin-login-form .btn-primary:hover { 
+            transform: translateY(-3px); 
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3); 
+        }
+        #admin-login-form .btn-primary:disabled { 
+            opacity: 0.7; 
+            cursor: not-allowed; 
+            transform: none; 
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 1024px) { 
+            .admin-layout { grid-template-columns: 1fr; }
+            .sidebar { position: static; }
+            .stats-grid { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+        }
+        @media (max-width: 768px) { 
+            .nav-container { flex-direction: column; gap: 1rem; padding: 1rem 20px; }
+            .admin-layout { grid-template-columns: 1fr; padding: 1rem 0; }
+            .sidebar { 
+                position: static; order: -1; 
+                background: linear-gradient(135deg, #1a365d, #2d5a87); 
+                color: white; border-radius: 15px;
+            }
+            .sidebar-menu button { color: rgba(255, 255, 255, 0.9); }
+            .sidebar-menu button:hover, .sidebar-menu button.active { 
+                background: rgba(255, 255, 255, 0.2); 
+                color: white; 
+            }
+            .sidebar, .main-content { padding: 1.5rem; }
+            .controls-bar { 
+                flex-direction: column; align-items: stretch; gap: 0.5rem;
+            }
+            .search-input { min-width: auto; }
+            .section-header { flex-direction: column; align-items: stretch; gap: 1rem; }
+            .data-table { font-size: 0.8rem; min-width: 800px; }
+            .data-table th, .data-table td { padding: 0.5rem 0.3rem; }
+            .guest-info { max-width: 120px; }
+            .action-buttons { 
+                display: flex; flex-direction: row; gap: 0.2rem; 
+                justify-content: center; flex-wrap: wrap;
+            }
+            .action-btn { 
+                padding: 0.4rem 0.6rem; font-size: 0.8rem; 
+                min-width: 35px; text-align: center;
+            }
+            .modal-content { margin: 5% auto; width: 95%; max-height: 85vh; }
+            .modal-body { max-height: 60vh; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .analytics-grid { grid-template-columns: 1fr; }
+        }
+        
+        /* Animations */
+        @keyframes modalSlideIn { from { opacity: 0; transform: translateY(-50px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-in { animation: fadeIn 0.5s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(40, 167, 69, 0); } 100% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0); } }
+        
+        /* Utilities */
+        .text-center { text-align: center; }
+        .text-success { color: #28a745; }
+        .text-danger { color: #dc3545; }
+        .text-warning { color: #ffc107; }
+        .text-info { color: #17a2b8; }
+        .mb-0 { margin-bottom: 0; }
+        .mb-1 { margin-bottom: 0.5rem; }
+        .mb-2 { margin-bottom: 1rem; }
+        .mb-3 { margin-bottom: 1.5rem; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <h2>Prince Alex Airbnb</h2>
+                <span>Admin Dashboard</span>
+            </div>
+            <div class="admin-nav">
+                <a href="index.html" class="nav-link">🏠 Main Site</a>
+                <span id="admin-user-info" class="user-info">Loading...</span>
+                <button onclick="logout()" class="logout-btn">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <div id="login-required" class="login-required">
+        <div class="container">
+            <div style="max-width: 500px; margin: 0 auto; background: white; padding: 3rem; border-radius: 20px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);">
+                <div style="text-align: center; margin-bottom: 2rem;">
+                    <div class="login-icon">🔐</div>
+                    <h2 style="color: #1a365d; margin-bottom: 1rem;">Admin Dashboard Login</h2>
+                    <p style="color: #666;">Enter your Prince Alex Airbnb credentials to access the admin dashboard</p>
+                </div>
+                
+                <form id="admin-login-form" style="display: flex; flex-direction: column; gap: 1.5rem;">
+                    <div class="form-group">
+                        <label for="admin-email">Email Address</label>
+                        <input type="email" id="admin-email" name="email" required placeholder="your@email.com" style="width: 100%; padding: 1rem; border: 2px solid #e9ecef; border-radius: 10px; font-size: 1rem; transition: all 0.3s ease;">
+                        <span id="admin-email-error" style="color: #dc3545; font-size: 0.8rem; display: none;"></span>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="admin-password">Password</label>
+                        <div style="position: relative;">
+                            <input type="password" id="admin-password" name="password" required placeholder="Enter your password" style="width: 100%; padding: 1rem; border: 2px solid #e9ecef; border-radius: 10px; font-size: 1rem; transition: all 0.3s ease;">
+                            <button type="button" onclick="toggleAdminPassword()" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: #666;">
+                                <span id="admin-password-toggle">👁️</span>
+                            </button>
+                        </div>
+                        <span id="admin-password-error" style="color: #dc3545; font-size: 0.8rem; display: none;"></span>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary" style="width: 100%; padding: 1.2rem; font-size: 1.1rem; margin-top: 1rem;">
+                        <span id="admin-login-text">Sign In to Dashboard</span>
+                        <span id="admin-login-loading" style="display: none;">Signing in...</span>
+                    </button>
+                </form>
+                
+                <div style="text-align: center; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid #e9ecef;">
+                    <a href="index.html" class="btn btn-secondary">Return to Main Site</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="admin-dashboard" style="display: none;">
+        <div class="container">
+            <div class="admin-layout">
+                <aside class="sidebar">
+                    <div class="sidebar-header">
+                        <div class="sidebar-avatar">A</div>
+                        <div class="sidebar-title">Admin Panel</div>
+                        <div class="sidebar-subtitle">Management Dashboard</div>
+                    </div>
+                    
+                    <ul class="sidebar-menu">
+                        <li><button onclick="showSection('dashboard')" class="active" id="dashboard-btn">
+                            <span class="menu-icon">📊</span>
+                            <span>Dashboard</span>
+                        </button></li>
+                        <li><button onclick="showSection('bookings')" id="bookings-btn">
+                            <span class="menu-icon">📋</span>
+                            <span>Bookings</span>
+                        </button></li>
+                        <li><button onclick="showSection('customers')" id="customers-btn">
+                            <span class="menu-icon">👥</span>
+                            <span>Customers</span>
+                        </button></li>
+                        <li><button onclick="showSection('messages')" id="messages-btn">
+                            <span class="menu-icon">💬</span>
+                            <span>Messages</span>
+                        </button></li>
+                        <li><button onclick="showSection('analytics')" id="analytics-btn">
+                            <span class="menu-icon">📈</span>
+                            <span>Analytics</span>
+                        </button></li>
+                        <li><button onclick="showSection('rooms')" id="rooms-btn">
+                            <span class="menu-icon">🏠</span>
+                            <span>Room Management</span>
+                        </button></li>
+                        <li><button onclick="showSection('system')" id="system-btn">
+                            <span class="menu-icon">⚙️</span>
+                            <span>System</span>
+                        </button></li>
+                    </ul>
+                </aside>
+                
+                <main class="main-content">
+                    <!-- Dashboard Section -->
+                    <div id="dashboard-section" class="content-section active">
+                        <div class="dashboard-header">
+                            <h1 class="dashboard-title">Dashboard Overview</h1>
+                            <p class="dashboard-subtitle">Welcome to your admin dashboard. Here's what's happening today.</p>
+                        </div>
+                        
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-header">
+                                    <div class="stat-icon">📋</div>
+                                </div>
+                                <div class="stat-number" id="total-bookings">0</div>
+                                <div class="stat-label">Total Bookings</div>
+                                <div class="stat-change" id="bookings-change">+0 this month</div>
+                            </div>
+                            
+                            <div class="stat-card">
+                                <div class="stat-header">
+                                    <div class="stat-icon">👥</div>
+                                </div>
+                                <div class="stat-number" id="total-customers">0</div>
+                                <div class="stat-label">Total Customers</div>
+                                <div class="stat-change" id="customers-change">+0 new this month</div>
+                            </div>
+                            
+                            <div class="stat-card">
+                                <div class="stat-header">
+                                    <div class="stat-icon">💰</div>
+                                </div>
+                                <div class="stat-number" id="total-revenue">KES 0</div>
+                                <div class="stat-label">Total Revenue</div>
+                                <div class="stat-change" id="revenue-change">+KES 0 this month</div>
+                            </div>
+                            
+                            <div class="stat-card">
+                                <div class="stat-header">
+                                    <div class="stat-icon">⭐</div>
+                                </div>
+                                <div class="stat-number" id="avg-rating">4.8</div>
+                                <div class="stat-label">Average Rating</div>
+                                <div class="stat-change">Excellent service</div>
+                            </div>
+                        </div>
+                        
+                        <div class="analytics-grid">
+                            <div class="analytics-card">
+                                <h4>Recent Activity</h4>
+                                <div id="recent-activity">Loading recent activity...</div>
+                            </div>
+                            
+                            <div class="analytics-card">
+                                <h4>Popular Rooms</h4>
+                                <div id="popular-rooms">Analyzing room popularity...</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Bookings Section -->
+                    <div id="bookings-section" class="content-section">
+                        <div class="section-header">
+                            <h2 class="section-title">Booking Management</h2>
+                            <div id="pending-alert" style="background: #fff3cd; padding: 1rem; border-radius: 8px; border-left: 4px solid #ffc107; margin-bottom: 1rem; display: none;">
+                                <strong>⏳ Pending Approvals:</strong> <span id="pending-count">0</span> booking(s) require your approval
+                            </div>
+                            <div class="controls-bar">
+                                <input type="text" id="booking-search" class="search-input" placeholder="Search bookings...">
+                                <select id="booking-status-filter" class="filter-select">
+                                    <option value="">All Status</option>
+                                    <option value="pending">⏳ Pending Approval</option>
+                                    <option value="confirmed">✅ Confirmed</option>
+                                    <option value="cancelled">❌ Cancelled</option>
+                                    <option value="completed">🏁 Completed</option>
+                                </select>
+                                <button onclick="approveAllPending()" class="btn btn-primary" style="margin-right: 0.5rem;">
+                                    <span>✅</span>
+                                    <span>Approve All Pending</span>
+                                </button>
+                                <button onclick="exportBookings()" class="export-btn">
+                                    <span>📊</span>
+                                    <span>Export</span>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Booking ID</th>
+                                        <th>Guest Name</th>
+                                        <th>Email</th>
+                                        <th>Phone</th>
+                                        <th>Room</th>
+                                        <th>Dates</th>
+                                        <th>Total</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="bookings-table-body">
+                                    <tr><td colspan="9" class="loading">Loading bookings...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Customers Section -->
+                    <div id="customers-section" class="content-section">
+                        <div class="section-header">
+                            <h2 class="section-title">Customer Management</h2>
+                            <div class="controls-bar">
+                                <input type="text" id="customer-search" class="search-input" placeholder="Search customers...">
+                                <select id="customer-sort" class="filter-select">
+                                    <option value="name">Sort by Name</option>
+                                    <option value="date">Sort by Join Date</option>
+                                    <option value="bookings">Sort by Bookings</option>
+                                    <option value="spent">Sort by Amount Spent</option>
+                                </select>
+                                <button onclick="exportCustomers()" class="export-btn">
+                                    <span>📊</span>
+                                    <span>Export</span>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Phone</th>
+                                        <th>Bookings</th>
+                                        <th>Total Spent</th>
+                                        <th>Joined</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="customers-table-body">
+                                    <tr><td colspan="7" class="loading">Loading customers...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Messages Section -->
+                    <div id="messages-section" class="content-section">
+                        <div class="section-header">
+                            <h2 class="section-title">Contact Messages</h2>
+                            <div class="controls-bar">
+                                <input type="text" id="message-search" class="search-input" placeholder="Search messages...">
+                                <select id="message-status-filter" class="filter-select">
+                                    <option value="">All Messages</option>
+                                    <option value="new">New</option>
+                                    <option value="replied">Replied</option>
+                                    <option value="resolved">Resolved</option>
+                                </select>
+                                <button onclick="exportMessages()" class="export-btn">
+                                    <span>📊</span>
+                                    <span>Export</span>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Subject</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="messages-table-body">
+                                    <tr><td colspan="6" class="loading">Loading messages...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Analytics Section -->
+                    <div id="analytics-section" class="content-section">
+                        <div class="section-header">
+                            <h2 class="section-title">Analytics & Reports</h2>
+                        </div>
+                        
+                        <div class="analytics-grid">
+                            <div class="analytics-card">
+                                <h4>📈 Revenue Analytics</h4>
+                                <div class="metric" id="monthly-revenue">KES 0</div>
+                                <div class="description" id="revenue-description">Monthly revenue and growth trends</div>
+                            </div>
+                            
+                            <div class="analytics-card">
+                                <h4>🏠 Room Performance</h4>
+                                <div class="metric" id="occupancy-rate">0%</div>
+                                <div class="description" id="occupancy-description">Average occupancy across all rooms</div>
+                            </div>
+                            
+                            <div class="analytics-card">
+                                <h4>👥 Customer Insights</h4>
+                                <div class="metric" id="customer-retention">0%</div>
+                                <div class="description" id="retention-description">Customer retention and loyalty metrics</div>
+                            </div>
+                            
+                            <div class="analytics-card">
+                                <h4>📊 Booking Trends</h4>
+                                <div class="metric" id="booking-trend">+0%</div>
+                                <div class="description" id="trend-description">Month-over-month booking growth</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Room Management Section -->
+                    <div id="rooms-section" class="content-section">
+                        <div class="section-header">
+                            <h2 class="section-title">Room Management</h2>
+                            <div class="controls-bar">
+                                <input type="text" id="room-search" class="search-input" placeholder="Search rooms...">
+                                <button onclick="showAddRoomModal()" class="add-btn">
+                                    <span>➕</span>
+                                    <span>Add New Room</span>
+                                </button>
+                                <button onclick="exportRooms()" class="export-btn">
+                                    <span>📊</span>
+                                    <span>Export</span>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Room ID</th>
+                                        <th>Room Name</th>
+                                        <th>Type</th>
+                                        <th>Price/Night</th>
+                                        <th>Max Guests</th>
+                                        <th>Rating</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="rooms-table-body">
+                                    <tr><td colspan="8" class="loading">Loading rooms...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- System Section -->
+                    <div id="system-section" class="content-section">
+                        <div class="section-header">
+                            <h2 class="section-title">System Administration</h2>
+                        </div>
+                        
+                        <div class="analytics-grid">
+                            <div class="analytics-card">
+                                <h4>🔧 Database Status</h4>
+                                <div class="metric" id="db-status">Checking...</div>
+                                <div class="description">
+                                    <button onclick="testDatabaseConnection()" class="btn btn-primary">Test Connection</button>
+                                </div>
+                            </div>
+                            
+                            <div class="analytics-card">
+                                <h4>📊 Data Management</h4>
+                                <div class="metric">Ready</div>
+                                <div class="description">
+                                    <button onclick="backupData()" class="btn btn-secondary mb-1">Backup Data</button>
+                                    <button onclick="createTestData()" class="btn btn-primary">Create Test Data</button>
+                                </div>
+                            </div>
+                            
+                            <div class="analytics-card">
+                                <h4>🔒 Security</h4>
+                                <div class="metric">Active</div>
+                                <div class="description">
+                                    Last login: <span id="last-login">Loading...</span>
+                                </div>
+                            </div>
+                            
+                            <div class="analytics-card">
+                                <h4>📱 System Info</h4>
+                                <div class="metric">v2.0</div>
+                                <div class="description">
+                                    Firebase: Connected<br>
+                                    Status: <span class="text-success">Active</span><br>
+                                    <button onclick="debugDashboard()" class="btn btn-secondary" style="margin-top: 0.5rem; font-size: 0.8rem; padding: 0.5rem 1rem;">Debug Info</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+    </div>
+
+    <!-- Booking Details Modal -->
+    <div id="booking-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('booking-modal')">&times;</span>
+            <div class="modal-header">
+                <h3 class="modal-title">Booking Details</h3>
+                <p class="modal-subtitle">Complete booking information and management</p>
+            </div>
+            <div class="modal-body" id="booking-modal-content">
+                <!-- Content will be loaded here -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('booking-modal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Customer Details Modal -->
+    <div id="customer-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('customer-modal')">&times;</span>
+            <div class="modal-header">
+                <h3 class="modal-title">Customer Details</h3>
+                <p class="modal-subtitle">Customer profile and booking history</p>
+            </div>
+            <div class="modal-body" id="customer-modal-content">
+                <!-- Content will be loaded here -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('customer-modal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Message Details Modal -->
+    <div id="message-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('message-modal')">&times;</span>
+            <div class="modal-header">
+                <h3 class="modal-title">Message Details</h3>
+                <p class="modal-subtitle">Contact form submission</p>
+            </div>
+            <div class="modal-body" id="message-modal-content">
+                <!-- Content will be loaded here -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="replyToMessage()">Reply</button>
+                <button class="btn btn-secondary" onclick="closeModal('message-modal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Room Modal -->
+    <div id="room-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('room-modal')">&times;</span>
+            <div class="modal-header">
+                <h3 class="modal-title" id="room-modal-title">Add New Room</h3>
+                <p class="modal-subtitle">Create or update room information</p>
+            </div>
+            <div class="modal-body">
+                <form id="room-form">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label for="room-name">Room Name *</label>
+                            <input type="text" id="room-name" name="roomName" required placeholder="e.g., Deluxe Suite">
+                        </div>
+                        <div class="form-group">
+                            <label for="room-type">Room Type *</label>
+                            <select id="room-type" name="roomType" required>
+                                <option value="">Select Type</option>
+                                <option value="suite">Suite</option>
+                                <option value="double">Double Room</option>
+                                <option value="single">Single Room</option>
+                                <option value="family">Family Room</option>
+                                <option value="budget">Budget Room</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="room-price">Price per Night (KES) *</label>
+                            <input type="number" id="room-price" name="price" required min="1000" step="100" placeholder="3500">
+                        </div>
+                        <div class="form-group">
+                            <label for="room-guests">Max Guests *</label>
+                            <select id="room-guests" name="maxGuests" required>
+                                <option value="">Select Max Guests</option>
+                                <option value="1">1 Guest</option>
+                                <option value="2">2 Guests</option>
+                                <option value="3">3 Guests</option>
+                                <option value="4">4 Guests</option>
+                                <option value="5">5+ Guests</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="room-rating">Rating</label>
+                            <select id="room-rating" name="rating">
+                                <option value="4.0">4.0 ⭐⭐⭐⭐</option>
+                                <option value="4.1">4.1 ⭐⭐⭐⭐</option>
+                                <option value="4.2">4.2 ⭐⭐⭐⭐</option>
+                                <option value="4.3">4.3 ⭐⭐⭐⭐</option>
+                                <option value="4.4">4.4 ⭐⭐⭐⭐</option>
+                                <option value="4.5" selected>4.5 ⭐⭐⭐⭐⭐</option>
+                                <option value="4.6">4.6 ⭐⭐⭐⭐⭐</option>
+                                <option value="4.7">4.7 ⭐⭐⭐⭐⭐</option>
+                                <option value="4.8">4.8 ⭐⭐⭐⭐⭐</option>
+                                <option value="4.9">4.9 ⭐⭐⭐⭐⭐</option>
+                                <option value="5.0">5.0 ⭐⭐⭐⭐⭐</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="room-reviews">Number of Reviews</label>
+                            <input type="number" id="room-reviews" name="reviews" min="0" placeholder="15" value="10">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="room-image">Main Image URL *</label>
+                        <input type="url" id="room-image" name="image" required placeholder="https://images.unsplash.com/photo-..." oninput="previewImage()">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem;">
+                            <small style="color: #666;">
+                                Use high-quality images from:
+                                <a href="https://unsplash.com/s/photos/hotel-room" target="_blank" style="color: #d4af37;">Unsplash</a>,
+                                <a href="https://pixabay.com/images/search/hotel%20room/" target="_blank" style="color: #d4af37;">Pixabay</a>, or your own hosted images
+                            </small>
+                            <button type="button" onclick="showImageSources()" class="btn btn-secondary" style="font-size: 0.8rem; padding: 0.3rem 0.8rem;">📸 Image Sources</button>
+                        </div>
+                        
+                        <!-- Image Preview -->
+                        <div id="image-preview-container" style="margin-top: 1rem; display: none;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                <label>Image Preview:</label>
+                                <button type="button" onclick="clearImagePreview()" class="btn btn-danger" style="font-size: 0.7rem; padding: 0.2rem 0.5rem;">🗑️ Clear</button>
+                            </div>
+                            <div style="border: 2px solid #e9ecef; border-radius: 10px; padding: 1rem; background: #f8f9fa;">
+                                <img id="image-preview" src="" alt="Room Image Preview" style="width: 100%; max-width: 400px; height: 200px; object-fit: cover; border-radius: 8px; display: block; margin: 0 auto; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);">
+                                <div id="image-info" style="text-align: center; margin-top: 0.5rem; font-size: 0.8rem; color: #666;"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Image Guidelines -->
+                        <div style="margin-top: 1rem; padding: 1rem; background: #e8f5e8; border-radius: 8px; border-left: 4px solid #28a745;">
+                            <h5 style="color: #1a365d; margin-bottom: 0.5rem;">📸 Image Guidelines:</h5>
+                            <ul style="margin: 0; padding-left: 1.5rem; color: #666; font-size: 0.9rem;">
+                                <li>Use high-resolution images (minimum 800x600px)</li>
+                                <li>Aspect ratio 4:3 or 16:9 works best</li>
+                                <li>Show the room's best features clearly</li>
+                                <li>Ensure good lighting and clean appearance</li>
+                                <li>Avoid copyrighted images - use free stock photos</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="room-features">Room Features (one per line)</label>
+                        <textarea id="room-features" name="features" rows="4" placeholder="🛏️ King Bed&#10;❄️ AC&#10;📶 WiFi&#10;🛁 Private Bath"></textarea>
+                        <small style="color: #666;">Enter each feature on a new line with emoji and description</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="room-description">Room Description *</label>
+                        <textarea id="room-description" name="description" rows="4" required placeholder="Describe the room, its amenities, and what makes it special..."></textarea>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label for="room-status">Room Status</label>
+                            <select id="room-status" name="status">
+                                <option value="available">Available</option>
+                                <option value="maintenance">Under Maintenance</option>
+                                <option value="occupied">Currently Occupied</option>
+                                <option value="inactive">Inactive</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="room-priority">Display Priority</label>
+                            <select id="room-priority" name="priority">
+                                <option value="1">High (Show First)</option>
+                                <option value="2">Medium</option>
+                                <option value="3" selected>Normal</option>
+                                <option value="4">Low</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="saveRoom()">Save Room</button>
+                <button class="btn btn-secondary" onclick="closeModal('room-modal')">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    
+    <script>
+        const firebaseConfig = { apiKey: "AIzaSyAUNs3WYS2mkvPvzRDfhyZFUbP2XpZjDQg", authDomain: "retailflow-pos-11726.firebaseapp.com", projectId: "retailflow-pos-11726", storageBucket: "retailflow-pos-11726.firebasestorage.app", messagingSenderId: "309314798354", appId: "1:309314798354:web:30784c2b2e7e42168629cb" };
+        let firebaseApp, auth, db, currentUser;
+        let bookingsData = [], customersData = [], messagesData = [];
+        let currentViewingId = null;
+
+        // Initialize Firebase
+        function initializeFirebase() {
+            if (typeof firebase !== 'undefined') {
+                try {
+                    firebaseApp = firebase.initializeApp(firebaseConfig);
+                    auth = firebase.auth();
+                    db = firebase.firestore();
+                    console.log('✅ Firebase initialized successfully');
+                    return true;
+                } catch (error) {
+                    console.error('❌ Firebase initialization error:', error);
+                    return false;
+                }
+            } else {
+                console.log('⏳ Firebase SDK not loaded yet');
+                return false;
+            }
+        }
+
+        // Auth State Management
+        function setupAuthStateListener() {
+            if (!auth) {
+                console.error('Auth not initialized');
+                return;
+            }
+            
+            auth.onAuthStateChanged(async (user) => {
+                console.log('🔐 Auth state changed:', user ? user.email : 'No user');
+                
+                if (user) {
+                    currentUser = user;
+                    document.getElementById('admin-user-info').textContent = `👤 ${user.displayName || user.email}`;
+                    document.getElementById('admin-dashboard').style.display = 'block';
+                    document.getElementById('login-required').style.display = 'none';
+                    
+                    // Clear login form
+                    const adminLoginForm = document.getElementById('admin-login-form');
+                    if (adminLoginForm) {
+                        adminLoginForm.reset();
+                        document.getElementById('admin-email-error').style.display = 'none';
+                        document.getElementById('admin-password-error').style.display = 'none';
+                    }
+                    
+                    console.log('👤 User logged in, loading dashboard data...');
+                    const userName = user.displayName || user.email.split('@')[0];
+                    showNotification(`Welcome back, ${userName}! Your Prince Alex Admin Dashboard is ready.`, 'success');
+                    
+                    await loadAllData();
+                    updateLastLogin();
+                } else {
+                    console.log('❌ No user logged in');
+                    document.getElementById('admin-dashboard').style.display = 'none';
+                    document.getElementById('login-required').style.display = 'flex';
+                    // Don't set returnUrl since we have login form on this page
+                }
+            });
+        }
+
+        // Load All Data
+        async function loadAllData() {
+            console.log('📊 Loading all dashboard data...');
+            
+            try {
+                if (!db) {
+                    throw new Error('Firestore not initialized');
+                }
+                
+                console.log('🔄 Fetching data from collections...');
+                
+                // Load bookings
+                console.log('📋 Loading bookings...');
+                let bookingsSnapshot;
+                try {
+                    bookingsSnapshot = await db.collection('bookings').get();
+                    console.log(`📋 Found ${bookingsSnapshot.size} bookings`);
+                } catch (bookingsError) {
+                    console.log('📋 No bookings collection or error:', bookingsError);
+                    bookingsSnapshot = { empty: true, docs: [] };
+                }
+                
+                // Load customers
+                console.log('👥 Loading customers...');
+                let customersSnapshot;
+                try {
+                    customersSnapshot = await db.collection('customers').get();
+                    console.log(`👥 Found ${customersSnapshot.size} customers`);
+                } catch (customersError) {
+                    console.log('👥 No customers collection or error:', customersError);
+                    customersSnapshot = { empty: true, docs: [] };
+                }
+                
+                // Load messages
+                console.log('💬 Loading messages...');
+                let messagesSnapshot;
+                try {
+                    messagesSnapshot = await db.collection('contact-messages').get();
+                    console.log(`💬 Found ${messagesSnapshot.size} messages`);
+                } catch (messagesError) {
+                    console.log('💬 No messages collection or error:', messagesError);
+                    messagesSnapshot = { empty: true, docs: [] };
+                }
+                
+                // Load rooms
+                console.log('🏠 Loading rooms...');
+                await loadRoomsData();
+                
+                // Process bookings
+                bookingsData = [];
+                if (bookingsSnapshot && !bookingsSnapshot.empty) {
+                    bookingsSnapshot.forEach(doc => {
+                        try {
+                            const data = doc.data();
+                            bookingsData.push({ id: doc.id, ...data });
+                        } catch (docError) {
+                            console.error('Error processing booking doc:', docError);
+                        }
+                    });
+                }
+                console.log(`📋 Processed ${bookingsData.length} bookings`);
+                
+                // Process customers
+                customersData = [];
+                if (customersSnapshot && !customersSnapshot.empty) {
+                    customersSnapshot.forEach(doc => {
+                        try {
+                            const data = doc.data();
+                            customersData.push({ id: doc.id, ...data });
+                        } catch (docError) {
+                            console.error('Error processing customer doc:', docError);
+                        }
+                    });
+                }
+                console.log(`👥 Processed ${customersData.length} customers`);
+                
+                // Process messages
+                messagesData = [];
+                if (messagesSnapshot && !messagesSnapshot.empty) {
+                    messagesSnapshot.forEach(doc => {
+                        try {
+                            const data = doc.data();
+                            messagesData.push({ id: doc.id, ...data });
+                        } catch (docError) {
+                            console.error('Error processing message doc:', docError);
+                        }
+                    });
+                }
+                console.log(`💬 Processed ${messagesData.length} messages`);
+                
+                // Update UI
+                console.log('🎨 Updating dashboard UI...');
+                updateDashboardStats();
+                displayBookings();
+                displayCustomers();
+                displayMessages();
+                generateAnalytics();
+                
+                console.log('✅ Dashboard data loaded successfully');
+                
+            } catch (error) {
+                console.error('❌ Error loading dashboard data:', error);
+                showNotification(`Error loading dashboard data: ${error.message}`, 'error');
+                
+                // Show empty states
+                document.getElementById('bookings-table-body').innerHTML = '<tr><td colspan="9" class="text-center">Error loading data</td></tr>';
+                document.getElementById('customers-table-body').innerHTML = '<tr><td colspan="7" class="text-center">Error loading data</td></tr>';
+                document.getElementById('messages-table-body').innerHTML = '<tr><td colspan="6" class="text-center">Error loading data</td></tr>';
+            }
+        }
+
+        // Dashboard Stats
+        function updateDashboardStats() {
+            const totalBookings = bookingsData.length;
+            const totalCustomers = customersData.length;
+            const totalRevenue = bookingsData.reduce((sum, booking) => sum + (booking.finalTotal || booking.total || 0), 0);
+            
+            document.getElementById('total-bookings').textContent = totalBookings;
+            document.getElementById('total-customers').textContent = totalCustomers;
+            document.getElementById('total-revenue').textContent = `KES ${totalRevenue.toLocaleString()}`;
+            
+            // Calculate monthly changes
+            const now = new Date();
+            const thisMonth = now.getMonth();
+            const thisYear = now.getFullYear();
+            
+            const thisMonthBookings = bookingsData.filter(booking => {
+                const bookingDate = booking.createdAt?.toDate() || new Date(0);
+                return bookingDate.getMonth() === thisMonth && bookingDate.getFullYear() === thisYear;
+            }).length;
+            
+            const thisMonthCustomers = customersData.filter(customer => {
+                const joinDate = customer.createdAt?.toDate() || new Date(0);
+                return joinDate.getMonth() === thisMonth && joinDate.getFullYear() === thisYear;
+            }).length;
+            
+            const thisMonthRevenue = bookingsData.filter(booking => {
+                const bookingDate = booking.createdAt?.toDate() || new Date(0);
+                return bookingDate.getMonth() === thisMonth && bookingDate.getFullYear() === thisYear;
+            }).reduce((sum, booking) => sum + (booking.finalTotal || booking.total || 0), 0);
+            
+            document.getElementById('bookings-change').textContent = `+${thisMonthBookings} this month`;
+            document.getElementById('customers-change').textContent = `+${thisMonthCustomers} new this month`;
+            document.getElementById('revenue-change').textContent = `+KES ${thisMonthRevenue.toLocaleString()} this month`;
+            
+            // Recent Activity
+            const recentBookings = bookingsData
+                .sort((a, b) => (b.createdAt?.toDate() || new Date(0)) - (a.createdAt?.toDate() || new Date(0)))
+                .slice(0, 5);
+            
+            const recentActivity = document.getElementById('recent-activity');
+            if (recentBookings.length > 0) {
+                recentActivity.innerHTML = recentBookings.map(booking => 
+                    `<p class="mb-1">📋 ${booking.guestName || 'Guest'} booked ${booking.roomName || 'a room'}</p>`
+                ).join('');
+            } else {
+                recentActivity.innerHTML = '<p class="text-center">No recent activity</p>';
+            }
+            
+            // Popular Rooms
+            const roomBookings = {};
+            bookingsData.forEach(booking => {
+                const room = booking.roomName || 'Unknown Room';
+                roomBookings[room] = (roomBookings[room] || 0) + 1;
+            });
+            
+            const popularRooms = Object.entries(roomBookings)
+                .sort(([,a], [,b]) => b - a)
+                .slice(0, 3);
+            
+            const popularRoomsEl = document.getElementById('popular-rooms');
+            if (popularRooms.length > 0) {
+                popularRoomsEl.innerHTML = popularRooms.map(([room, count]) => 
+                    `<p class="mb-1">🏠 ${room}: ${count} bookings</p>`
+                ).join('');
+            } else {
+                popularRoomsEl.innerHTML = '<p class="text-center">No booking data available</p>';
+            }
+        }
+
+        // Display Functions
+        function displayBookings(filteredData = null) {
+            const data = filteredData || bookingsData;
+            const tbody = document.getElementById('bookings-table-body');
+            
+            // Update pending count alert
+            const pendingBookings = bookingsData.filter(b => b.status === 'pending').length;
+            const pendingAlert = document.getElementById('pending-alert');
+            const pendingCount = document.getElementById('pending-count');
+            
+            if (pendingBookings > 0) {
+                pendingAlert.style.display = 'block';
+                pendingCount.textContent = pendingBookings;
+            } else {
+                pendingAlert.style.display = 'none';
+            }
+            
+            if (data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="9" class="empty-state">No bookings found</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = data.map(booking => {
+                const checkinDate = booking.checkin ? new Date(booking.checkin).toLocaleDateString() : 'N/A';
+                const checkoutDate = booking.checkout ? new Date(booking.checkout).toLocaleDateString() : 'N/A';
+                const total = booking.finalTotal || booking.total || 0;
+                const status = booking.status || 'pending';
+                
+                // Format guest information - use booking data first, then try to get from customer if userId exists
+                let guestName = booking.guestName || 'N/A';
+                let guestEmail = booking.guestEmail || 'N/A';
+                let guestPhone = booking.guestPhone || 'N/A';
+                
+                // If we have userId but no guest info, try to get from customer data
+                if ((guestName === 'N/A' || guestEmail === 'N/A') && booking.userId) {
+                    const customer = customersData.find(c => c.id === booking.userId);
+                    if (customer) {
+                        if (guestName === 'N/A' && (customer.firstName || customer.lastName)) {
+                            guestName = `${customer.firstName || ''} ${customer.lastName || ''}`.trim();
+                        }
+                        if (guestEmail === 'N/A' && customer.email) {
+                            guestEmail = customer.email;
+                        }
+                        if (guestPhone === 'N/A' && customer.phone) {
+                            guestPhone = customer.phone;
+                        }
+                    }
+                }
+                
+                const isPending = status === 'pending';
+                const rowStyle = isPending ? 'background: #fff3cd !important; border-left: 4px solid #ffc107;' : '';
+                
+                return `
+                    <tr style="${rowStyle}">
+                        <td><small>${booking.id.substring(0, 8)}...</small></td>
+                        <td><strong>${guestName}</strong>${isPending ? ' <span style="color: #ffc107;">⏳</span>' : ''}</td>
+                        <td><a href="mailto:${guestEmail}" style="color: #d4af37; text-decoration: none;">${guestEmail}</a></td>
+                        <td><a href="tel:${guestPhone}" style="color: #d4af37; text-decoration: none;">${guestPhone}</a></td>
+                        <td>${booking.roomName || 'N/A'}</td>
+                        <td><small>${checkinDate}<br>${checkoutDate}</small></td>
+                        <td><strong>KES ${total.toLocaleString()}</strong></td>
+                        <td><span class="status-badge status-${status}">${isPending ? '⏳ ' : ''}${status}</span></td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="action-btn view" onclick="viewBooking('${booking.id}')" title="View Details">👁️</button>
+                                ${isPending ? 
+                                    `<button class="action-btn approve" onclick="updateBookingStatus('${booking.id}', 'confirmed')" title="Approve Booking" style="background: #28a745; animation: pulse 2s infinite;">✅ Approve</button>` :
+                                    `<button class="action-btn edit" onclick="updateBookingStatus('${booking.id}', 'pending')" title="Set to Pending">⏳</button>`
+                                }
+                                <button class="action-btn delete" onclick="updateBookingStatus('${booking.id}', 'cancelled')" title="Cancel">❌</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function displayCustomers(filteredData = null) {
+            const data = filteredData || customersData;
+            const tbody = document.getElementById('customers-table-body');
+            
+            if (data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="empty-state">No customers found</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = data.map(customer => {
+                const fullName = `${customer.firstName || ''} ${customer.lastName || ''}`.trim() || 'N/A';
+                const joinedDate = customer.createdAt ? customer.createdAt.toDate().toLocaleDateString() : 'N/A';
+                const stats = customer.stats || {};
+                
+                return `
+                    <tr>
+                        <td>${fullName}</td>
+                        <td>${customer.email || 'N/A'}</td>
+                        <td>${customer.phone || 'N/A'}</td>
+                        <td>${stats.totalBookings || 0}</td>
+                        <td>KES ${(stats.totalSpent || 0).toLocaleString()}</td>
+                        <td>${joinedDate}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="action-btn view" onclick="viewCustomer('${customer.id}')">View</button>
+                                <button class="action-btn edit" onclick="contactCustomer('${customer.email}')">Contact</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function displayMessages(filteredData = null) {
+            const data = filteredData || messagesData;
+            const tbody = document.getElementById('messages-table-body');
+            
+            if (data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No messages found</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = data.map(message => {
+                const createdDate = message.createdAt ? message.createdAt.toDate().toLocaleDateString() : 'N/A';
+                const status = message.status || 'new';
+                
+                return `
+                    <tr>
+                        <td>${createdDate}</td>
+                        <td>${message.firstName || ''} ${message.lastName || ''}</td>
+                        <td>${message.email || 'N/A'}</td>
+                        <td>${message.subject || 'N/A'}</td>
+                        <td><span class="status-badge status-${status}">${status}</span></td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="action-btn view" onclick="viewMessage('${message.id}')">View</button>
+                                <button class="action-btn edit" onclick="replyToMessage('${message.email}', '${message.subject}')">Reply</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // Room Management Functions
+        let roomsData = [];
+        let editingRoomId = null;
+
+        async function loadRoomsData() {
+            try {
+                const roomsSnapshot = await db.collection('rooms').get();
+                roomsData = [];
+                
+                if (!roomsSnapshot.empty) {
+                    roomsSnapshot.forEach(doc => {
+                        roomsData.push({ id: doc.id, ...doc.data() });
+                    });
+                } else {
+                    // Initialize with default rooms if collection doesn't exist
+                    await initializeDefaultRooms();
+                }
+                
+                console.log(`🏠 Processed ${roomsData.length} rooms`);
+                displayRooms();
+                
+            } catch (error) {
+                console.error('Error loading rooms:', error);
+                // Use fallback default rooms
+                roomsData = getDefaultRooms();
+                displayRooms();
+            }
+        }
+
+        function getDefaultRooms() {
+            return [
+                { id: 1, name: 'Deluxe Suite', type: 'suite', price: 4500, maxGuests: 2, rating: 4.8, reviews: 24, status: 'available', priority: 1, image: 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80', features: ['🛏️ King Bed', '❄️ AC', '📶 WiFi', '🛁 Private Bath'], description: 'Luxurious suite with premium amenities and stunning city views.' },
+                { id: 2, name: 'Executive Room', type: 'double', price: 3800, maxGuests: 2, rating: 4.6, reviews: 18, status: 'available', priority: 2, image: 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80', features: ['🛏️ Queen Bed', '❄️ AC', '📶 WiFi', '💼 Work Desk'], description: 'Perfect for business travelers with modern amenities.' },
+                { id: 3, name: 'Standard Room', type: 'single', price: 3200, maxGuests: 2, rating: 4.5, reviews: 15, status: 'available', priority: 3, image: 'https://images.unsplash.com/photo-1566665797739-1674de7a421a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80', features: ['🛏️ Double Bed', '❄️ AC', '📶 WiFi'], description: 'Comfortable and affordable accommodation for couples.' },
+                { id: 4, name: 'Family Room', type: 'family', price: 5200, maxGuests: 4, rating: 4.7, reviews: 12, status: 'available', priority: 2, image: 'https://images.unsplash.com/photo-1595576508898-0ad5c879a061?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80', features: ['🛏️ 2 Beds', '❄️ AC', '📶 WiFi', '🛁 2 Baths'], description: 'Spacious room perfect for families with children.' },
+                { id: 5, name: 'Premium Suite', type: 'suite', price: 5800, maxGuests: 2, rating: 4.9, reviews: 8, status: 'available', priority: 1, image: 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80', features: ['🛏️ King Bed', '❄️ AC', '📶 WiFi', '🛁 Jacuzzi'], description: 'Our finest accommodation with luxury amenities.' },
+                { id: 6, name: 'Budget Room', type: 'budget', price: 2800, maxGuests: 1, rating: 4.3, reviews: 20, status: 'available', priority: 4, image: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80', features: ['🛏️ Single Bed', '📶 WiFi'], description: 'Affordable comfort for solo travelers.' },
+                { id: 7, name: 'Garden View Room', type: 'double', price: 4200, maxGuests: 2, rating: 4.6, reviews: 16, status: 'available', priority: 3, image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80', features: ['🛏️ Queen Bed', '❄️ AC', '📶 WiFi', '🌿 Garden View'], description: 'Peaceful room overlooking our beautiful garden.' },
+                { id: 8, name: 'Business Suite', type: 'suite', price: 4800, maxGuests: 2, rating: 4.7, reviews: 14, status: 'available', priority: 2, image: 'https://images.unsplash.com/photo-1631049035182-249067d7618e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80', features: ['🛏️ King Bed', '❄️ AC', '📶 WiFi', '💼 Office Space'], description: 'Ideal for business travelers with dedicated workspace.' }
+            ];
+        }
+
+        async function initializeDefaultRooms() {
+            try {
+                const defaultRooms = getDefaultRooms();
+                const batch = db.batch();
+                
+                defaultRooms.forEach(room => {
+                    const roomRef = db.collection('rooms').doc(room.id.toString());
+                    batch.set(roomRef, {
+                        ...room,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                });
+                
+                await batch.commit();
+                console.log('✅ Default rooms initialized in Firebase');
+                await loadRoomsData();
+                
+            } catch (error) {
+                console.error('Error initializing default rooms:', error);
+                roomsData = getDefaultRooms();
+            }
+        }
+
+        function displayRooms(filteredData = null) {
+            const data = filteredData || roomsData;
+            const tbody = document.getElementById('rooms-table-body');
+            
+            if (data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" class="empty-state">No rooms found</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = data.map(room => {
+                const statusClass = room.status === 'available' ? 'status-confirmed' : 
+                                  room.status === 'maintenance' ? 'status-pending' : 
+                                  room.status === 'occupied' ? 'status-cancelled' : 'status-pending';
+                
+                return `
+                    <tr>
+                        <td><strong>#${room.id}</strong></td>
+                        <td><strong>${room.name}</strong></td>
+                        <td><span style="text-transform: capitalize;">${room.type}</span></td>
+                        <td><strong>KES ${room.price.toLocaleString()}</strong></td>
+                        <td>${room.maxGuests} guest${room.maxGuests > 1 ? 's' : ''}</td>
+                        <td>${room.rating} ⭐ (${room.reviews} reviews)</td>
+                        <td><span class="status-badge ${statusClass}">${room.status}</span></td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="action-btn view" onclick="viewRoom('${room.id}')" title="View Details">👁️</button>
+                                <button class="action-btn edit" onclick="editRoom('${room.id}')" title="Edit Room">✏️</button>
+                                <button class="action-btn delete" onclick="deleteRoom('${room.id}')" title="Delete Room">🗑️</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function showAddRoomModal() {
+            editingRoomId = null;
+            document.getElementById('room-modal-title').textContent = 'Add New Room';
+            document.getElementById('room-form').reset();
+            document.getElementById('room-modal').style.display = 'block';
+        }
+
+        function editRoom(roomId) {
+            const room = roomsData.find(r => r.id == roomId);
+            if (!room) {
+                showNotification('Room not found', 'error');
+                return;
+            }
+            
+            editingRoomId = roomId;
+            document.getElementById('room-modal-title').textContent = 'Edit Room';
+            
+            // Fill form with room data
+            document.getElementById('room-name').value = room.name || '';
+            document.getElementById('room-type').value = room.type || '';
+            document.getElementById('room-price').value = room.price || '';
+            document.getElementById('room-guests').value = room.maxGuests || '';
+            document.getElementById('room-rating').value = room.rating || '4.5';
+            document.getElementById('room-reviews').value = room.reviews || '10';
+            document.getElementById('room-image').value = room.image || '';
+            document.getElementById('room-features').value = Array.isArray(room.features) ? room.features.join('\n') : '';
+            document.getElementById('room-description').value = room.description || '';
+            document.getElementById('room-status').value = room.status || 'available';
+            document.getElementById('room-priority').value = room.priority || '3';
+            
+            // Show image preview if image exists
+            if (room.image) {
+                setTimeout(() => previewImage(), 100);
+            }
+            
+            document.getElementById('room-modal').style.display = 'block';
+        }
+
+        async function saveRoom() {
+            const form = document.getElementById('room-form');
+            const formData = new FormData(form);
+            
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+            
+            try {
+                const roomData = {
+                    name: formData.get('roomName'),
+                    type: formData.get('roomType'),
+                    price: parseInt(formData.get('price')),
+                    maxGuests: parseInt(formData.get('maxGuests')),
+                    rating: parseFloat(formData.get('rating')),
+                    reviews: parseInt(formData.get('reviews')) || 10,
+                    image: formData.get('image'),
+                    features: formData.get('features').split('\n').filter(f => f.trim()),
+                    description: formData.get('description'),
+                    status: formData.get('status'),
+                    priority: parseInt(formData.get('priority')),
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                };
+                
+                if (editingRoomId) {
+                    // Update existing room
+                    await db.collection('rooms').doc(editingRoomId.toString()).update(roomData);
+                    showNotification('Room updated successfully!', 'success');
+                } else {
+                    // Add new room
+                    const newRoomId = Math.max(...roomsData.map(r => parseInt(r.id)), 0) + 1;
+                    roomData.id = newRoomId;
+                    roomData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+                    
+                    await db.collection('rooms').doc(newRoomId.toString()).set(roomData);
+                    showNotification('New room added successfully!', 'success');
+                }
+                
+                closeModal('room-modal');
+                await loadRoomsData();
+                
+            } catch (error) {
+                console.error('Error saving room:', error);
+                showNotification('Error saving room', 'error');
+            }
+        }
+
+        async function deleteRoom(roomId) {
+            if (!confirm('Are you sure you want to delete this room? This action cannot be undone.')) {
+                return;
+            }
+            
+            try {
+                await db.collection('rooms').doc(roomId.toString()).delete();
+                showNotification('Room deleted successfully', 'success');
+                await loadRoomsData();
+            } catch (error) {
+                console.error('Error deleting room:', error);
+                showNotification('Error deleting room', 'error');
+            }
+        }
+
+        function viewRoom(roomId) {
+            const room = roomsData.find(r => r.id == roomId);
+            if (!room) {
+                showNotification('Room not found', 'error');
+                return;
+            }
+            
+            // Open room details in a new tab
+            localStorage.setItem('selectedRoomId', roomId);
+            window.open('property.html', '_blank');
+        }
+
+        function exportRooms() {
+            try {
+                const csvContent = [
+                    ['Room ID', 'Name', 'Type', 'Price (KES)', 'Max Guests', 'Rating', 'Reviews', 'Status', 'Priority', 'Description'],
+                    ...roomsData.map(room => [
+                        room.id,
+                        room.name || '',
+                        room.type || '',
+                        room.price || 0,
+                        room.maxGuests || 1,
+                        room.rating || 4.5,
+                        room.reviews || 10,
+                        room.status || 'available',
+                        room.priority || 3,
+                        (room.description || '').replace(/,/g, ';')
+                    ])
+                ].map(row => row.join(',')).join('\n');
+                
+                downloadCSV(csvContent, `rooms_${new Date().toISOString().split('T')[0]}.csv`);
+                showNotification('Rooms exported successfully', 'success');
+            } catch (error) {
+                console.error('Export error:', error);
+                showNotification('Export failed', 'error');
+            }
+        }
+
+        // Image Preview Functions
+        function previewImage() {
+            const imageUrl = document.getElementById('room-image').value.trim();
+            const previewContainer = document.getElementById('image-preview-container');
+            const previewImg = document.getElementById('image-preview');
+            const imageInfo = document.getElementById('image-info');
+            
+            if (!imageUrl) {
+                previewContainer.style.display = 'none';
+                return;
+            }
+            
+            // Show loading state
+            previewContainer.style.display = 'block';
+            previewImg.style.opacity = '0.5';
+            imageInfo.innerHTML = '<span style="color: #ffc107;">⏳ Loading image preview...</span>';
+            
+            // Create a new image to test loading
+            const testImg = new Image();
+            
+            testImg.onload = function() {
+                previewImg.src = imageUrl;
+                previewImg.style.opacity = '1';
+                imageInfo.innerHTML = `
+                    <span style="color: #28a745;">✅ Image loaded successfully</span><br>
+                    <small>Dimensions: ${this.naturalWidth} × ${this.naturalHeight}px</small>
+                `;
+                
+                // Check image quality
+                if (this.naturalWidth < 600 || this.naturalHeight < 400) {
+                    imageInfo.innerHTML += '<br><span style="color: #ffc107;">⚠️ Consider using a higher resolution image</span>';
+                }
+                
+                showNotification('✅ Image preview loaded successfully', 'success');
+            };
+            
+            testImg.onerror = function() {
+                previewImg.style.opacity = '1';
+                previewImg.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjhmOWZhIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzY2NiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkltYWdlIG5vdCBmb3VuZDwvdGV4dD48L3N2Zz4=';
+                imageInfo.innerHTML = '<span style="color: #dc3545;">❌ Failed to load image. Please check the URL.</span>';
+                showNotification('❌ Image failed to load. Please check the URL.', 'error');
+            };
+            
+            // Start loading the image
+            testImg.src = imageUrl;
+        }
+
+        function clearImagePreview() {
+            document.getElementById('image-preview-container').style.display = 'none';
+            document.getElementById('room-image').value = '';
+        }
+
+        // Suggested Image Sources
+        function showImageSources() {
+            const sources = `
+                📸 **Free High-Quality Image Sources:**
+                
+                🔗 **Unsplash** (Recommended)
+                https://unsplash.com/s/photos/hotel-room
+                https://unsplash.com/s/photos/bedroom
+                https://unsplash.com/s/photos/luxury-room
+                
+                🔗 **Pixabay**
+                https://pixabay.com/images/search/hotel%20room/
+                
+                🔗 **Pexels**
+                https://www.pexels.com/search/hotel%20room/
+                
+                💡 **Tips:**
+                - Right-click image → "Copy image address"
+                - Use images with good lighting
+                - Choose images that match your room style
+                - Ensure images are copyright-free
+            `;
+            
+            showNotification(sources.replace(/\n/g, '<br>'), 'info');
+        }
+
+        // View Functions
+        async function viewBooking(bookingId) {
+            const booking = bookingsData.find(b => b.id === bookingId);
+            if (!booking) {
+                showNotification('Booking not found', 'error');
+                return;
+            }
+            
+            currentViewingId = bookingId;
+            const content = document.getElementById('booking-modal-content');
+            
+            // Get guest information with fallback to customer data
+            let guestName = booking.guestName || 'N/A';
+            let guestEmail = booking.guestEmail || 'N/A';
+            let guestPhone = booking.guestPhone || 'N/A';
+            
+            // Try to get from customer data if userId exists
+            if ((guestName === 'N/A' || guestEmail === 'N/A') && booking.userId) {
+                const customer = customersData.find(c => c.id === booking.userId);
+                if (customer) {
+                    if (guestName === 'N/A') {
+                        guestName = `${customer.firstName || ''} ${customer.lastName || ''}`.trim() || 'N/A';
+                    }
+                    if (guestEmail === 'N/A') {
+                        guestEmail = customer.email || 'N/A';
+                    }
+                    if (guestPhone === 'N/A') {
+                        guestPhone = customer.phone || 'N/A';
+                    }
+                }
+            }
+            
+            content.innerHTML = `
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+                    <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 10px;">
+                        <h4 style="color: #1a365d; margin-bottom: 1rem;">📋 Booking Details</h4>
+                        <div class="form-group">
+                            <label>Booking Reference:</label>
+                            <p><strong>${booking.id}</strong></p>
+                        </div>
+                        <div class="form-group">
+                            <label>Room:</label>
+                            <p><strong>${booking.roomName || 'N/A'}</strong></p>
+                        </div>
+                        <div class="form-group">
+                            <label>Status:</label>
+                            <p><span class="status-badge status-${(booking.status || 'pending')}">${(booking.status || 'pending')}</span></p>
+                        </div>
+                        <div class="form-group">
+                            <label>Created Date:</label>
+                            <p>${booking.createdAt ? booking.createdAt.toDate().toLocaleDateString() : 'N/A'}</p>
+                        </div>
+                    </div>
+                    
+                    <div style="background: #e8f5e8; padding: 1.5rem; border-radius: 10px;">
+                        <h4 style="color: #1a365d; margin-bottom: 1rem;">👤 Guest Contact Information</h4>
+                        <div class="form-group">
+                            <label>Full Name:</label>
+                            <p><strong>${guestName}</strong></p>
+                        </div>
+                        <div class="form-group">
+                            <label>Email Address:</label>
+                            <p><a href="mailto:${guestEmail}" style="color: #d4af37; font-weight: 500; text-decoration: none;">${guestEmail}</a></p>
+                        </div>
+                        <div class="form-group">
+                            <label>Phone Number:</label>
+                            <p><a href="tel:${guestPhone}" style="color: #d4af37; font-weight: 500; text-decoration: none;">${guestPhone}</a></p>
+                        </div>
+                        <div class="form-group">
+                            <label>Account Type:</label>
+                            <p>${booking.userId ? 'Registered Customer' : 'Guest Booking'}</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                    <div style="background: #fff3cd; padding: 1.5rem; border-radius: 10px;">
+                        <h4 style="color: #1a365d; margin-bottom: 1rem;">📅 Stay Information</h4>
+                        <div class="form-group">
+                            <label>Check-in Date:</label>
+                            <p><strong>${booking.checkin ? new Date(booking.checkin).toLocaleDateString() : 'N/A'}</strong></p>
+                        </div>
+                        <div class="form-group">
+                            <label>Check-out Date:</label>
+                            <p><strong>${booking.checkout ? new Date(booking.checkout).toLocaleDateString() : 'N/A'}</strong></p>
+                        </div>
+                        <div class="form-group">
+                            <label>Number of Nights:</label>
+                            <p><strong>${booking.nights || 1}</strong></p>
+                        </div>
+                        <div class="form-group">
+                            <label>Number of Guests:</label>
+                            <p><strong>${booking.guests || 1}</strong></p>
+                        </div>
+                    </div>
+                    
+                    <div style="background: #d4edda; padding: 1.5rem; border-radius: 10px;">
+                        <h4 style="color: #1a365d; margin-bottom: 1rem;">💰 Payment Information</h4>
+                        <div class="form-group">
+                            <label>Total Amount:</label>
+                            <p><strong style="color: #d4af37; font-size: 1.2rem;">KES ${(booking.finalTotal || booking.total || 0).toLocaleString()}</strong></p>
+                        </div>
+                        <div class="form-group">
+                            <label>Payment Method:</label>
+                            <p>${booking.paymentMethod || 'N/A'}</p>
+                        </div>
+                        <div class="form-group">
+                            <label>Payment Status:</label>
+                            <p>${booking.paymentStatus || 'Pending'}</p>
+                        </div>
+                        <div class="form-group">
+                            <label>Room Rate:</label>
+                            <p>KES ${(booking.roomPrice || 0).toLocaleString()} per night</p>
+                        </div>
+                    </div>
+                </div>
+                
+                ${booking.specialRequests ? `
+                    <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 10px; margin-top: 1.5rem; border-left: 4px solid #d4af37;">
+                        <h4 style="color: #1a365d; margin-bottom: 1rem;">📝 Special Requests</h4>
+                        <p style="line-height: 1.6; color: #666;">${booking.specialRequests}</p>
+                    </div>
+                ` : ''}
+                
+                <div style="margin-top: 1.5rem; padding: 1rem; background: #e9ecef; border-radius: 8px; text-align: center;">
+                    <p style="margin-bottom: 1rem; color: #666;">Quick Actions:</p>
+                    <button onclick="contactGuest('${guestEmail}', '${guestName}')" class="btn btn-primary" style="margin-right: 0.5rem;">📧 Email Guest</button>
+                    <button onclick="callGuest('${guestPhone}')" class="btn btn-secondary">📞 Call Guest</button>
+                </div>
+            `;
+            
+            document.getElementById('booking-modal').style.display = 'block';
+        }
+
+        async function viewCustomer(customerId) {
+            const customer = customersData.find(c => c.id === customerId);
+            if (!customer) {
+                showNotification('Customer not found', 'error');
+                return;
+            }
+            
+            currentViewingId = customerId;
+            const content = document.getElementById('customer-modal-content');
+            const stats = customer.stats || {};
+            const prefs = customer.preferences || {};
+            
+            content.innerHTML = `
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label>First Name:</label>
+                        <p>${customer.firstName || 'N/A'}</p>
+                    </div>
+                    <div class="form-group">
+                        <label>Last Name:</label>
+                        <p>${customer.lastName || 'N/A'}</p>
+                    </div>
+                    <div class="form-group">
+                        <label>Email:</label>
+                        <p>${customer.email || 'N/A'}</p>
+                    </div>
+                    <div class="form-group">
+                        <label>Phone:</label>
+                        <p>${customer.phone || 'N/A'}</p>
+                    </div>
+                    <div class="form-group">
+                        <label>Member Since:</label>
+                        <p>${customer.createdAt ? customer.createdAt.toDate().toLocaleDateString() : 'N/A'}</p>
+                    </div>
+                    <div class="form-group">
+                        <label>Last Login:</label>
+                        <p>${customer.lastLoginAt ? customer.lastLoginAt.toDate().toLocaleDateString() : 'Never'}</p>
+                    </div>
+                    <div class="form-group">
+                        <label>Total Bookings:</label>
+                        <p><strong>${stats.totalBookings || 0}</strong></p>
+                    </div>
+                    <div class="form-group">
+                        <label>Total Spent:</label>
+                        <p><strong>KES ${(stats.totalSpent || 0).toLocaleString()}</strong></p>
+                    </div>
+                    <div class="form-group">
+                        <label>Preferred Currency:</label>
+                        <p>${prefs.currency || 'KES'}</p>
+                    </div>
+                    <div class="form-group">
+                        <label>Newsletter:</label>
+                        <p>${customer.newsletter ? 'Subscribed' : 'Not subscribed'}</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Customer Type:</label>
+                    <p>${customer.customerType || 'Standard'}</p>
+                </div>
+            `;
+            
+            document.getElementById('customer-modal').style.display = 'block';
+        }
+
+        async function viewMessage(messageId) {
+            const message = messagesData.find(m => m.id === messageId);
+            if (!message) {
+                showNotification('Message not found', 'error');
+                return;
+            }
+            
+            currentViewingId = messageId;
+            const content = document.getElementById('message-modal-content');
+            
+            content.innerHTML = `
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label>From:</label>
+                        <p>${message.firstName || ''} ${message.lastName || ''}</p>
+                    </div>
+                    <div class="form-group">
+                        <label>Email:</label>
+                        <p>${message.email || 'N/A'}</p>
+                    </div>
+                    <div class="form-group">
+                        <label>Phone:</label>
+                        <p>${message.phone || 'N/A'}</p>
+                    </div>
+                    <div class="form-group">
+                        <label>Date:</label>
+                        <p>${message.createdAt ? message.createdAt.toDate().toLocaleDateString() : 'N/A'}</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Subject:</label>
+                    <p><strong>${message.subject || 'N/A'}</strong></p>
+                </div>
+                <div class="form-group">
+                    <label>Message:</label>
+                    <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px; border-left: 4px solid #d4af37;">
+                        ${message.message || 'No message content'}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Status:</label>
+                    <p><span class="status-badge status-${message.status || 'new'}">${message.status || 'new'}</span></p>
+                </div>
+            `;
+            
+            document.getElementById('message-modal').style.display = 'block';
+        }
+
+        // Update Functions
+        async function updateBookingStatus(bookingId, newStatus) {
+            try {
+                const updateData = {
+                    status: newStatus,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                };
+                
+                // Add approval fields when confirming
+                if (newStatus === 'confirmed') {
+                    updateData.adminApproved = true;
+                    updateData.approvedAt = firebase.firestore.FieldValue.serverTimestamp();
+                    updateData.approvedBy = currentUser ? currentUser.email : 'admin';
+                }
+                
+                await db.collection('bookings').doc(bookingId).update(updateData);
+                
+                const statusMessages = {
+                    'confirmed': '✅ Booking approved and confirmed!',
+                    'cancelled': '❌ Booking cancelled',
+                    'pending': '⏳ Booking set to pending approval',
+                    'completed': '🏁 Booking marked as completed'
+                };
+                
+                showNotification(statusMessages[newStatus] || `Booking status updated to ${newStatus}`, 'success');
+                
+                // Update local data
+                const booking = bookingsData.find(b => b.id === bookingId);
+                if (booking) {
+                    booking.status = newStatus;
+                    if (newStatus === 'confirmed') {
+                        booking.adminApproved = true;
+                        booking.approvedBy = currentUser ? currentUser.email : 'admin';
+                    }
+                    displayBookings();
+                    updateDashboardStats();
+                }
+            } catch (error) {
+                console.error('Error updating booking status:', error);
+                showNotification('Error updating booking status', 'error');
+            }
+        }
+
+        async function approveAllPending() {
+            const pendingBookings = bookingsData.filter(b => b.status === 'pending');
+            
+            if (pendingBookings.length === 0) {
+                showNotification('No pending bookings to approve', 'info');
+                return;
+            }
+            
+            if (!confirm(`Are you sure you want to approve all ${pendingBookings.length} pending booking(s)?`)) {
+                return;
+            }
+            
+            try {
+                const batch = db.batch();
+                const approvalData = {
+                    status: 'confirmed',
+                    adminApproved: true,
+                    approvedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    approvedBy: currentUser ? currentUser.email : 'admin',
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                };
+                
+                pendingBookings.forEach(booking => {
+                    const bookingRef = db.collection('bookings').doc(booking.id);
+                    batch.update(bookingRef, approvalData);
+                });
+                
+                await batch.commit();
+                
+                showNotification(`✅ Successfully approved ${pendingBookings.length} booking(s)!`, 'success');
+                
+                // Update local data
+                pendingBookings.forEach(booking => {
+                    booking.status = 'confirmed';
+                    booking.adminApproved = true;
+                    booking.approvedBy = currentUser ? currentUser.email : 'admin';
+                });
+                
+                displayBookings();
+                updateDashboardStats();
+                
+            } catch (error) {
+                console.error('Error approving all bookings:', error);
+                showNotification('Error approving bookings', 'error');
+            }
+        }
+
+        // Contact Functions
+        function contactCustomer(email) {
+            if (email && email !== 'N/A') {
+                window.open(`mailto:${email}?subject=Message from Prince Alex Airbnb&body=Dear valued customer,\n\nThank you for choosing Prince Alex Airbnb!\n\nBest regards,\nPrince Alex Team`);
+            } else {
+                showNotification('No email address available', 'warning');
+            }
+        }
+
+        function contactGuest(email, name) {
+            if (email && email !== 'N/A') {
+                const guestName = name !== 'N/A' ? name : 'valued guest';
+                window.open(`mailto:${email}?subject=Regarding your booking at Prince Alex Airbnb&body=Dear ${guestName},\n\nThank you for choosing Prince Alex Airbnb for your stay in Uthiru, Nairobi.\n\nWe hope you have a wonderful experience!\n\nBest regards,\nPrince Alex Team\n\nContact us: +254 717 384 875`);
+            } else {
+                showNotification('No email address available', 'warning');
+            }
+        }
+
+        function callGuest(phone) {
+            if (phone && phone !== 'N/A') {
+                window.open(`tel:${phone}`);
+                showNotification(`Calling ${phone}...`, 'info');
+            } else {
+                showNotification('No phone number available', 'warning');
+            }
+        }
+
+        function replyToMessage(email, subject) {
+            if (email && email !== 'N/A') {
+                const replySubject = subject ? `Re: ${subject}` : 'Reply from Prince Alex Airbnb';
+                window.open(`mailto:${email}?subject=${encodeURIComponent(replySubject)}&body=Dear ${email},\n\nThank you for contacting Prince Alex Airbnb.\n\nBest regards,\nPrince Alex Team`);
+            } else {
+                showNotification('No email address available', 'warning');
+            }
+        }
+
+        // Export Functions
+        function exportBookings() {
+            try {
+                const csvContent = [
+                    ['Booking ID', 'Guest Name', 'Email', 'Phone', 'Room', 'Check-in', 'Check-out', 'Nights', 'Guests', 'Total', 'Status', 'Payment Method', 'Created Date'],
+                    ...bookingsData.map(booking => [
+                        booking.id,
+                        booking.guestName || '',
+                        booking.guestEmail || '',
+                        booking.guestPhone || '',
+                        booking.roomName || '',
+                        booking.checkin || '',
+                        booking.checkout || '',
+                        booking.nights || 1,
+                        booking.guests || 1,
+                        booking.finalTotal || booking.total || 0,
+                        booking.status || 'pending',
+                        booking.paymentMethod || '',
+                        booking.createdAt ? booking.createdAt.toDate().toLocaleDateString() : ''
+                    ])
+                ].map(row => row.join(',')).join('\n');
+                
+                downloadCSV(csvContent, `bookings_${new Date().toISOString().split('T')[0]}.csv`);
+                showNotification('Bookings exported successfully', 'success');
+            } catch (error) {
+                console.error('Export error:', error);
+                showNotification('Export failed', 'error');
+            }
+        }
+
+        function exportCustomers() {
+            try {
+                const csvContent = [
+                    ['Name', 'Email', 'Phone', 'Total Bookings', 'Total Spent', 'Member Since', 'Last Login', 'Newsletter'],
+                    ...customersData.map(customer => [
+                        `${customer.firstName || ''} ${customer.lastName || ''}`.trim(),
+                        customer.email || '',
+                        customer.phone || '',
+                        (customer.stats?.totalBookings || 0),
+                        (customer.stats?.totalSpent || 0),
+                        customer.createdAt ? customer.createdAt.toDate().toLocaleDateString() : '',
+                        customer.lastLoginAt ? customer.lastLoginAt.toDate().toLocaleDateString() : '',
+                        customer.newsletter ? 'Yes' : 'No'
+                    ])
+                ].map(row => row.join(',')).join('\n');
+                
+                downloadCSV(csvContent, `customers_${new Date().toISOString().split('T')[0]}.csv`);
+                showNotification('Customers exported successfully', 'success');
+            } catch (error) {
+                console.error('Export error:', error);
+                showNotification('Export failed', 'error');
+            }
+        }
+
+        function exportMessages() {
+            try {
+                const csvContent = [
+                    ['Date', 'Name', 'Email', 'Phone', 'Subject', 'Message', 'Status'],
+                    ...messagesData.map(message => [
+                        message.createdAt ? message.createdAt.toDate().toLocaleDateString() : '',
+                        `${message.firstName || ''} ${message.lastName || ''}`.trim(),
+                        message.email || '',
+                        message.phone || '',
+                        message.subject || '',
+                        (message.message || '').replace(/,/g, ';'), // Replace commas to avoid CSV issues
+                        message.status || 'new'
+                    ])
+                ].map(row => row.join(',')).join('\n');
+                
+                downloadCSV(csvContent, `messages_${new Date().toISOString().split('T')[0]}.csv`);
+                showNotification('Messages exported successfully', 'success');
+            } catch (error) {
+                console.error('Export error:', error);
+                showNotification('Export failed', 'error');
+            }
+        }
+
+        function downloadCSV(csvContent, filename) {
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+
+        // Analytics
+        function generateAnalytics() {
+            try {
+                const now = new Date();
+                const thisMonth = now.getMonth();
+                const thisYear = now.getFullYear();
+                const lastMonth = thisMonth === 0 ? 11 : thisMonth - 1;
+                const lastMonthYear = thisMonth === 0 ? thisYear - 1 : thisYear;
+                
+                // Monthly Revenue
+                const thisMonthRevenue = bookingsData.filter(booking => {
+                    const bookingDate = booking.createdAt?.toDate() || new Date(0);
+                    return bookingDate.getMonth() === thisMonth && bookingDate.getFullYear() === thisYear;
+                }).reduce((sum, booking) => sum + (booking.finalTotal || booking.total || 0), 0);
+                
+                const lastMonthRevenue = bookingsData.filter(booking => {
+                    const bookingDate = booking.createdAt?.toDate() || new Date(0);
+                    return bookingDate.getMonth() === lastMonth && bookingDate.getFullYear() === lastMonthYear;
+                }).reduce((sum, booking) => sum + (booking.finalTotal || booking.total || 0), 0);
+                
+                document.getElementById('monthly-revenue').textContent = `KES ${thisMonthRevenue.toLocaleString()}`;
+                
+                const revenueGrowth = lastMonthRevenue > 0 ? ((thisMonthRevenue - lastMonthRevenue) / lastMonthRevenue * 100).toFixed(1) : 0;
+                document.getElementById('revenue-description').textContent = `${revenueGrowth >= 0 ? '+' : ''}${revenueGrowth}% from last month`;
+                
+                // Occupancy Rate (simplified calculation)
+                const totalRooms = 8; // Prince Alex has 8 rooms
+                const daysInMonth = new Date(thisYear, thisMonth + 1, 0).getDate();
+                const totalRoomNights = totalRooms * daysInMonth;
+                const bookedNights = bookingsData.filter(booking => {
+                    const bookingDate = booking.createdAt?.toDate() || new Date(0);
+                    return bookingDate.getMonth() === thisMonth && bookingDate.getFullYear() === thisYear;
+                }).reduce((sum, booking) => sum + (booking.nights || 1), 0);
+                
+                const occupancyRate = totalRoomNights > 0 ? (bookedNights / totalRoomNights * 100).toFixed(1) : 0;
+                document.getElementById('occupancy-rate').textContent = `${occupancyRate}%`;
+                document.getElementById('occupancy-description').textContent = `${bookedNights} nights booked out of ${totalRoomNights} available`;
+                
+                // Customer Retention
+                const returningCustomers = customersData.filter(customer => (customer.stats?.totalBookings || 0) > 1).length;
+                const retentionRate = customersData.length > 0 ? (returningCustomers / customersData.length * 100).toFixed(1) : 0;
+                document.getElementById('customer-retention').textContent = `${retentionRate}%`;
+                document.getElementById('retention-description').textContent = `${returningCustomers} of ${customersData.length} customers have returned`;
+                
+                // Booking Trend
+                const thisMonthBookings = bookingsData.filter(booking => {
+                    const bookingDate = booking.createdAt?.toDate() || new Date(0);
+                    return bookingDate.getMonth() === thisMonth && bookingDate.getFullYear() === thisYear;
+                }).length;
+                
+                const lastMonthBookings = bookingsData.filter(booking => {
+                    const bookingDate = booking.createdAt?.toDate() || new Date(0);
+                    return bookingDate.getMonth() === lastMonth && bookingDate.getFullYear() === lastMonthYear;
+                }).length;
+                
+                const bookingTrend = lastMonthBookings > 0 ? ((thisMonthBookings - lastMonthBookings) / lastMonthBookings * 100).toFixed(1) : 0;
+                document.getElementById('booking-trend').textContent = `${bookingTrend >= 0 ? '+' : ''}${bookingTrend}%`;
+                document.getElementById('trend-description').textContent = `${thisMonthBookings} bookings this month vs ${lastMonthBookings} last month`;
+                
+            } catch (error) {
+                console.error('Error generating analytics:', error);
+            }
+        }
+
+        // System Functions
+        async function testDatabaseConnection() {
+            try {
+                const testDoc = await db.collection('test').add({
+                    message: 'Admin connection test',
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                await db.collection('test').doc(testDoc.id).delete();
+                document.getElementById('db-status').textContent = '✅ Connected';
+                document.getElementById('db-status').className = 'metric text-success';
+                showNotification('Database connection successful', 'success');
+            } catch (error) {
+                console.error('Database test failed:', error);
+                document.getElementById('db-status').textContent = '❌ Error';
+                document.getElementById('db-status').className = 'metric text-danger';
+                showNotification('Database connection failed', 'error');
+            }
+        }
+
+        function backupData() {
+            showNotification('Backup functionality will be implemented in a future update', 'info');
+        }
+
+        // Debug Functions
+        function debugDashboard() {
+            console.log('🔍 Admin Dashboard Debug Info:');
+            console.log('- Firebase App:', firebaseApp ? '✅ Initialized' : '❌ Not initialized');
+            console.log('- Auth:', auth ? '✅ Available' : '❌ Not available');
+            console.log('- Firestore:', db ? '✅ Available' : '❌ Not available');
+            console.log('- Current User:', currentUser ? `✅ ${currentUser.email}` : '❌ Not logged in');
+            console.log('- Bookings Data:', bookingsData.length, 'items');
+            console.log('- Customers Data:', customersData.length, 'items');
+            console.log('- Messages Data:', messagesData.length, 'items');
+            
+            showNotification(`Debug info logged to console. Bookings: ${bookingsData.length}, Customers: ${customersData.length}, Messages: ${messagesData.length}`, 'info');
+        }
+
+        // Test Data Creation (for debugging)
+        async function createTestData() {
+            if (!currentUser) {
+                showNotification('Please log in first', 'error');
+                return;
+            }
+            
+            try {
+                // Create test booking
+                const testBooking = {
+                    userId: currentUser.uid,
+                    roomId: 1,
+                    roomName: 'Test Deluxe Suite',
+                    roomPrice: 4500,
+                    checkin: '2025-01-15',
+                    checkout: '2025-01-17',
+                    nights: 2,
+                    guests: 2,
+                    subtotal: 9000,
+                    cleaningFee: 500,
+                    serviceFee: 720,
+                    taxes: 450,
+                    finalTotal: 10670,
+                    guestName: currentUser.displayName || 'Test User',
+                    guestEmail: currentUser.email,
+                    guestPhone: '+254 700 000 000',
+                    status: 'pending',
+                    adminApproved: false,
+                    requiresApproval: true,
+                    paymentMethod: 'M-Pesa',
+                    paymentStatus: 'Completed',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                };
+                
+                await db.collection('bookings').add(testBooking);
+                
+                // Create test message
+                const testMessage = {
+                    firstName: 'Test',
+                    lastName: 'Customer',
+                    email: 'test@example.com',
+                    phone: '+254 700 000 000',
+                    subject: 'booking-inquiry',
+                    message: 'This is a test message from the admin dashboard.',
+                    status: 'new',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                };
+                
+                await db.collection('contact-messages').add(testMessage);
+                
+                showNotification('✅ Test data created successfully!', 'success');
+                setTimeout(() => loadAllData(), 1000);
+                
+            } catch (error) {
+                console.error('Error creating test data:', error);
+                showNotification('Error creating test data', 'error');
+            }
+        }
+
+        function updateLastLogin() {
+            document.getElementById('last-login').textContent = new Date().toLocaleString();
+        }
+
+        // UI Functions
+        function showSection(sectionName) {
+            // Update sidebar
+            document.querySelectorAll('.sidebar-menu button').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`${sectionName}-btn`).classList.add('active');
+            
+            // Update content
+            document.querySelectorAll('.content-section').forEach(section => section.classList.remove('active'));
+            document.getElementById(`${sectionName}-section`).classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+            currentViewingId = null;
+        }
+
+        function showLoadingState() {
+            document.querySelectorAll('.loading').forEach(el => {
+                el.textContent = 'Loading...';
+            });
+        }
+
+        function hideLoadingState() {
+            // Loading states will be replaced by actual data
+        }
+
+        // Search and Filter Functions
+        function setupSearchAndFilters() {
+            // Booking search
+            document.getElementById('booking-search').addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                const filtered = bookingsData.filter(booking => 
+                    (booking.guestName || '').toLowerCase().includes(searchTerm) ||
+                    (booking.guestEmail || '').toLowerCase().includes(searchTerm) ||
+                    (booking.roomName || '').toLowerCase().includes(searchTerm) ||
+                    booking.id.toLowerCase().includes(searchTerm)
+                );
+                displayBookings(filtered);
+            });
+            
+            // Booking status filter
+            document.getElementById('booking-status-filter').addEventListener('change', function() {
+                const status = this.value;
+                const filtered = status ? bookingsData.filter(booking => booking.status === status) : bookingsData;
+                displayBookings(filtered);
+            });
+            
+            // Customer search
+            document.getElementById('customer-search').addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                const filtered = customersData.filter(customer => 
+                    `${customer.firstName || ''} ${customer.lastName || ''}`.toLowerCase().includes(searchTerm) ||
+                    (customer.email || '').toLowerCase().includes(searchTerm)
+                );
+                displayCustomers(filtered);
+            });
+            
+            // Message search
+            document.getElementById('message-search').addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                const filtered = messagesData.filter(message => 
+                    `${message.firstName || ''} ${message.lastName || ''}`.toLowerCase().includes(searchTerm) ||
+                    (message.email || '').toLowerCase().includes(searchTerm) ||
+                    (message.subject || '').toLowerCase().includes(searchTerm)
+                );
+                displayMessages(filtered);
+            });
+            
+            // Room search
+            document.getElementById('room-search').addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                const filtered = roomsData.filter(room => 
+                    (room.name || '').toLowerCase().includes(searchTerm) ||
+                    (room.type || '').toLowerCase().includes(searchTerm) ||
+                    (room.description || '').toLowerCase().includes(searchTerm)
+                );
+                displayRooms(filtered);
+            });
+        }
+
+        // Utility Functions
+        async function logout() {
+            try {
+                await auth.signOut();
+                showNotification('Logged out successfully', 'success');
+                setTimeout(() => window.location.href = 'login.html', 1000);
+            } catch (error) {
+                console.error('Logout error:', error);
+                showNotification('Error logging out', 'error');
+            }
+        }
+
+        function showNotification(message, type = 'info') {
+            const existingNotifications = document.querySelectorAll('.notification');
+            existingNotifications.forEach(notification => notification.remove());
+            
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <span class="notification-icon">${getNotificationIcon(type)}</span>
+                    <span class="notification-message">${message}</span>
+                    <button class="notification-close" onclick="this.parentElement.parentElement.remove()">&times;</button>
+                </div>
+            `;
+            
+            notification.style.cssText = `
+                position: fixed; top: 100px; right: 20px; 
+                background: ${getNotificationColor(type)}; color: white; 
+                padding: 1rem; border-radius: 12px; 
+                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2); 
+                z-index: 10001; min-width: 300px; max-width: 400px; 
+                animation: slideInRight 0.3s ease;
+            `;
+            
+            const content = notification.querySelector('.notification-content');
+            content.style.cssText = 'display: flex; align-items: center; gap: 10px;';
+            
+            const closeBtn = notification.querySelector('.notification-close');
+            closeBtn.style.cssText = 'background: none; border: none; color: white; font-size: 1.2rem; cursor: pointer; margin-left: auto; padding: 0 5px;';
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.style.animation = 'slideOutRight 0.3s ease';
+                    setTimeout(() => notification.remove(), 300);
+                }
+            }, 5000);
+        }
+
+        function getNotificationIcon(type) {
+            switch(type) {
+                case 'success': return '✓';
+                case 'error': return '✗';
+                case 'warning': return '⚠';
+                default: return 'ℹ';
+            }
+        }
+
+        function getNotificationColor(type) {
+            switch(type) {
+                case 'success': return '#28a745';
+                case 'error': return '#dc3545';
+                case 'warning': return '#ffc107';
+                default: return '#007bff';
+            }
+        }
+
+        // Admin Login Functions
+        function setupAdminLogin() {
+            const adminLoginForm = document.getElementById('admin-login-form');
+            if (adminLoginForm) {
+                adminLoginForm.addEventListener('submit', handleAdminLogin);
+                
+                // Add focus styles
+                const inputs = adminLoginForm.querySelectorAll('input');
+                inputs.forEach(input => {
+                    input.addEventListener('focus', function() {
+                        this.style.borderColor = '#d4af37';
+                        this.style.boxShadow = '0 0 0 3px rgba(212, 175, 55, 0.1)';
+                    });
+                    input.addEventListener('blur', function() {
+                        this.style.borderColor = '#e9ecef';
+                        this.style.boxShadow = 'none';
+                    });
+                });
+            }
+        }
+
+        async function handleAdminLogin(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('admin-email').value.trim();
+            const password = document.getElementById('admin-password').value;
+            
+            // Clear previous errors
+            document.getElementById('admin-email-error').style.display = 'none';
+            document.getElementById('admin-password-error').style.display = 'none';
+            
+            // Basic validation
+            if (!email || !password) {
+                showNotification('Please fill in all fields', 'error');
+                return;
+            }
+            
+            // Update button state
+            updateAdminLoginButton(true);
+            
+            try {
+                const userCredential = await auth.signInWithEmailAndPassword(email, password);
+                console.log('✅ Admin login successful:', userCredential.user.email);
+                
+                // Update last login time
+                if (db && userCredential.user) {
+                    try {
+                        await db.collection('customers').doc(userCredential.user.uid).update({
+                            lastLoginAt: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                    } catch (updateError) {
+                        console.log('Note: Could not update last login time:', updateError);
+                    }
+                }
+                
+                // Show success message
+                showNotification('🎉 Welcome to Prince Alex Admin Dashboard! Loading your management tools...', 'success');
+                
+                // The auth state listener will handle showing the dashboard
+                
+            } catch (error) {
+                console.error('Admin login error:', error);
+                console.log('Error code:', error.code); // Debug log
+                
+                let errorMessage = '';
+                let fieldError = '';
+                
+                switch (error.code) {
+                    case 'auth/user-not-found':
+                        errorMessage = 'We couldn\'t find an account with that email address. Please check your email or create a new account.';
+                        fieldError = 'No account found with this email';
+                        document.getElementById('admin-email-error').textContent = fieldError;
+                        document.getElementById('admin-email-error').style.display = 'block';
+                        break;
+                    case 'auth/wrong-password':
+                        errorMessage = 'The password you entered is incorrect. Please try again.';
+                        fieldError = 'Incorrect password';
+                        document.getElementById('admin-password-error').textContent = fieldError;
+                        document.getElementById('admin-password-error').style.display = 'block';
+                        break;
+                    case 'auth/invalid-credential':
+                    case 'auth/invalid-login-credentials':
+                        errorMessage = 'Invalid email or password. Please check your credentials and try again.';
+                        // Don't specify which field is wrong for security
+                        break;
+                    case 'auth/invalid-email':
+                        errorMessage = 'Please enter a valid email address in the correct format (e.g., name@example.com).';
+                        fieldError = 'Please enter a valid email address';
+                        document.getElementById('admin-email-error').textContent = fieldError;
+                        document.getElementById('admin-email-error').style.display = 'block';
+                        break;
+                    case 'auth/missing-password':
+                        errorMessage = 'Please enter your password.';
+                        fieldError = 'Password is required';
+                        document.getElementById('admin-password-error').textContent = fieldError;
+                        document.getElementById('admin-password-error').style.display = 'block';
+                        break;
+                    case 'auth/too-many-requests':
+                        errorMessage = 'Too many unsuccessful login attempts. Please wait a few minutes before trying again.';
+                        break;
+                    case 'auth/network-request-failed':
+                        errorMessage = 'Network connection error. Please check your internet connection and try again.';
+                        break;
+                    case 'auth/user-disabled':
+                        errorMessage = 'This account has been temporarily disabled. Please contact support for assistance.';
+                        break;
+                    default:
+                        // For any unhandled error, show a helpful message
+                        errorMessage = 'Login failed. Please check your email and password are correct.';
+                        console.log('Unhandled auth error:', error.code, error.message);
+                }
+                
+                showNotification(errorMessage, 'error');
+            }
+            
+            updateAdminLoginButton(false);
+        }
+
+        function updateAdminLoginButton(loading) {
+            const loginText = document.getElementById('admin-login-text');
+            const loginLoading = document.getElementById('admin-login-loading');
+            const loginButton = document.querySelector('#admin-login-form button[type="submit"]');
+            
+            if (loading) {
+                loginButton.disabled = true;
+                loginText.style.display = 'none';
+                loginLoading.style.display = 'inline';
+            } else {
+                loginButton.disabled = false;
+                loginText.style.display = 'inline';
+                loginLoading.style.display = 'none';
+            }
+        }
+
+        function toggleAdminPassword() {
+            const passwordInput = document.getElementById('admin-password');
+            const toggleIcon = document.getElementById('admin-password-toggle');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.textContent = '🙈';
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.textContent = '👁️';
+            }
+        }
+
+        // Initialize App
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Admin dashboard loading...');
+            
+            function tryInitialize() {
+                if (typeof firebase !== 'undefined') {
+                    console.log('🔥 Firebase SDK loaded, initializing...');
+                    if (initializeFirebase()) {
+                        setupAuthStateListener();
+                        setupSearchAndFilters();
+                        setupAdminLogin();
+                        console.log('✅ Admin dashboard initialized successfully');
+                    }
+                } else {
+                    console.log('⏳ Waiting for Firebase SDK...');
+                    setTimeout(tryInitialize, 500);
+                }
+            }
+            
+            tryInitialize();
+            
+            // Close modals on outside click
+            window.addEventListener('click', function(event) {
+                const modals = document.querySelectorAll('.modal');
+                modals.forEach(modal => {
+                    if (event.target === modal) {
+                        modal.style.display = 'none';
+                    }
+                });
+            });
+        });
+
+        // Add CSS animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideInRight { 
+                from { transform: translateX(100%); opacity: 0; } 
+                to { transform: translateX(0); opacity: 1; } 
+            } 
+            @keyframes slideOutRight { 
+                from { transform: translateX(0); opacity: 1; } 
+                to { transform: translateX(100%); opacity: 0; } 
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

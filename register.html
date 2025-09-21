@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Prince Alex Airbnb, Uthiru</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Poppins', sans-serif; line-height: 1.6; color: #333; overflow-x: hidden; background: #f8f9fa; }
+        
+        .navbar { position: fixed; top: 0; width: 100%; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); z-index: 1000; padding: 1rem 0; transition: all 0.3s ease; box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1); }
+        .nav-container { max-width: 1200px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; }
+        .nav-logo h2 { font-family: 'Montserrat', sans-serif; color: #1a365d; font-size: 1.5rem; font-weight: 600; }
+        .nav-logo span { color: #d4af37; font-size: 0.9rem; font-weight: 400; }
+        .nav-menu { display: flex; align-items: center; gap: 2rem; }
+        .nav-link { text-decoration: none; color: #333; font-weight: 500; transition: color 0.3s ease; position: relative; }
+        .nav-link:hover, .nav-link.active { color: #d4af37; }
+        .nav-link.active::after { content: ''; position: absolute; bottom: -5px; left: 0; width: 100%; height: 2px; background: #d4af37; }
+        .login-btn { background: #d4af37; color: white !important; padding: 0.5rem 1.5rem; border-radius: 25px; transition: all 0.3s ease; }
+        .login-btn:hover { background: #b8941f; transform: translateY(-2px); }
+        .hamburger { display: none; flex-direction: column; cursor: pointer; z-index: 1001; }
+        .hamburger span { width: 25px; height: 3px; background: #333; margin: 3px 0; transition: 0.3s; }
+        .hamburger.active span:nth-child(1) { transform: rotate(-45deg) translate(-5px, 6px); }
+        .hamburger.active span:nth-child(2) { opacity: 0; }
+        .hamburger.active span:nth-child(3) { transform: rotate(45deg) translate(-5px, -6px); }
+        
+        .auth-section { min-height: 100vh; padding: 100px 0 50px; display: flex; align-items: center; justify-content: center; }
+        .auth-container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        .auth-grid { display: grid; grid-template-columns: 1fr 1fr; min-height: 600px; background: white; border-radius: 20px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1); overflow: hidden; }
+        .auth-welcome { background: linear-gradient(135deg, #1a365d, #2d5a87); color: white; padding: 3rem; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+        .welcome-content { position: relative; z-index: 2; text-align: center; max-width: 400px; }
+        .welcome-content h1 { font-size: 2.5rem; font-weight: 700; margin-bottom: 1.5rem; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); }
+        .welcome-content > p { font-size: 1.1rem; margin-bottom: 2rem; opacity: 0.9; line-height: 1.7; }
+        .welcome-features { display: flex; flex-direction: column; gap: 1rem; margin-bottom: 3rem; }
+        .feature-item { display: flex; align-items: center; gap: 1rem; padding: 0.8rem; background: rgba(255, 255, 255, 0.1); border-radius: 10px; backdrop-filter: blur(10px); transition: all 0.3s ease; }
+        .feature-item:hover { background: rgba(255, 255, 255, 0.2); transform: translateX(10px); }
+        .feature-icon { font-size: 1.5rem; width: 40px; text-align: center; }
+        .feature-item span:last-child { font-size: 0.9rem; font-weight: 500; }
+        .auth-switch { text-align: center; padding-top: 2rem; border-top: 1px solid rgba(255, 255, 255, 0.2); }
+        .auth-switch p { margin-bottom: 0.8rem; opacity: 0.8; }
+        .switch-link { color: #d4af37; text-decoration: none; font-weight: 600; font-size: 1.1rem; transition: all 0.3s ease; }
+        .switch-link:hover { color: #b8941f; text-decoration: underline; }
+        
+        .auth-form-side { padding: 3rem; display: flex; align-items: center; justify-content: center; background: white; }
+        .auth-form-container { width: 100%; max-width: 400px; }
+        .form-header { text-align: center; margin-bottom: 2rem; }
+        .form-header h2 { font-size: 2rem; font-weight: 600; color: #1a365d; margin-bottom: 0.5rem; }
+        .form-header p { color: #666; font-size: 1rem; }
+        .auth-form { display: flex; flex-direction: column; gap: 1.5rem; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .form-group { display: flex; flex-direction: column; }
+        .form-group label { font-weight: 500; color: #333; margin-bottom: 0.5rem; font-size: 0.9rem; }
+        .form-group input, .form-group select { padding: 0.8rem; border: 2px solid #e9ecef; border-radius: 10px; font-size: 1rem; font-family: 'Poppins', sans-serif; transition: all 0.3s ease; background: white; }
+        .form-group input:focus, .form-group select:focus { outline: none; border-color: #d4af37; box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1); transform: translateY(-2px); }
+        .password-input { position: relative; }
+        .password-toggle { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; padding: 5px; color: #666; transition: color 0.3s ease; }
+        .password-toggle:hover { color: #d4af37; }
+        .toggle-icon { font-size: 1.2rem; }
+        .error-message { color: #dc3545; font-size: 0.8rem; margin-top: 0.3rem; display: none; }
+        .error-message.show { display: block; }
+        .password-strength { margin-top: 0.5rem; }
+        .strength-bar { width: 100%; height: 4px; background: #e9ecef; border-radius: 2px; overflow: hidden; margin-bottom: 0.3rem; }
+        .strength-fill { height: 100%; width: 0%; background: #dc3545; transition: all 0.3s ease; border-radius: 2px; }
+        .strength-fill.good { width: 100%; background: #28a745; }
+        .strength-text { font-size: 0.8rem; color: #666; }
+        .form-checkboxes { display: flex; flex-direction: column; gap: 1rem; }
+        .checkbox-label { display: flex; align-items: flex-start; gap: 0.8rem; cursor: pointer; font-size: 0.9rem; line-height: 1.5; }
+        .checkbox-label input[type="checkbox"] { display: none; }
+        .checkmark { width: 20px; height: 20px; border: 2px solid #ddd; border-radius: 4px; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; flex-shrink: 0; margin-top: 2px; }
+        .checkbox-label input[type="checkbox"]:checked + .checkmark { background: #d4af37; border-color: #d4af37; }
+        .checkbox-label input[type="checkbox"]:checked + .checkmark::after { content: '✓'; color: white; font-size: 0.8rem; font-weight: bold; }
+        .checkbox-label a { color: #d4af37; text-decoration: none; }
+        .checkbox-label a:hover { text-decoration: underline; }
+        .auth-btn { background: linear-gradient(135deg, #d4af37, #b8941f); color: white; border: none; padding: 1rem 2rem; border-radius: 12px; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; position: relative; overflow: hidden; margin-top: 1rem; min-height: 44px; }
+        .auth-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3); }
+        .auth-btn:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
+        .auth-footer { text-align: center; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid #e9ecef; }
+        .auth-footer p { font-size: 0.8rem; color: #666; line-height: 1.5; }
+        .auth-footer a { color: #d4af37; text-decoration: none; }
+        .auth-footer a:hover { text-decoration: underline; }
+        
+        .modal { display: none; position: fixed; z-index: 10000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); animation: fadeIn 0.3s ease; }
+        .modal-content { position: relative; background-color: white; margin: 5% auto; padding: 2rem; width: 90%; max-width: 600px; border-radius: 15px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2); animation: slideInDown 0.3s ease; max-height: 80vh; overflow-y: auto; }
+        .close-modal { position: absolute; top: 1rem; right: 1.5rem; font-size: 2rem; cursor: pointer; color: #666; transition: color 0.3s ease; }
+        .close-modal:hover { color: #333; }
+        .success-header { text-align: center; margin-bottom: 2rem; }
+        .success-icon { font-size: 4rem; margin-bottom: 1rem; }
+        .success-header h2 { color: #28a745; font-size: 1.8rem; margin-bottom: 0.5rem; }
+        .success-header p { color: #666; font-size: 1.1rem; }
+        .success-details { margin-bottom: 2rem; text-align: left; }
+        .success-info { background: #f8f9fa; padding: 1.5rem; border-radius: 10px; margin-bottom: 1.5rem; border-left: 4px solid #28a745; }
+        .success-info p { color: #333; margin-bottom: 1rem; font-size: 0.95rem; line-height: 1.6; display: flex; align-items: flex-start; gap: 0.5rem; }
+        .success-info p:last-child { margin-bottom: 0; }
+        .next-steps { background: #e8f5e8; padding: 1.2rem; border-radius: 8px; border-left: 4px solid #d4af37; }
+        .next-steps h4 { color: #1a365d; font-size: 1.1rem; margin-bottom: 0.8rem; font-weight: 600; }
+        .next-steps p { color: #666; font-size: 0.95rem; line-height: 1.5; margin: 0; }
+        .success-actions { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; }
+        .primary-btn { background: #d4af37; color: white; border: none; padding: 1rem 2rem; border-radius: 8px; font-size: 1rem; font-weight: 500; cursor: pointer; transition: all 0.3s ease; min-height: 44px; }
+        .primary-btn:hover { background: #b8941f; transform: translateY(-2px); }
+        .secondary-btn { background: #6c757d; color: white; border: none; padding: 1rem 2rem; border-radius: 8px; font-size: 1rem; font-weight: 500; cursor: pointer; transition: all 0.3s ease; min-height: 44px; }
+        .secondary-btn:hover { background: #5a6268; transform: translateY(-2px); }
+        
+        .footer { background: #1a1a1a; color: white; padding: 3rem 0 1rem; margin-top: 4rem; }
+        .footer-content { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-bottom: 2rem; }
+        .footer-section h3, .footer-section h4 { margin-bottom: 1rem; color: #d4af37; }
+        .footer-section p, .footer-section li { margin-bottom: 0.5rem; opacity: 0.8; }
+        .footer-section ul { list-style: none; }
+        .footer-section a { color: white; text-decoration: none; opacity: 0.8; transition: opacity 0.3s ease; }
+        .footer-section a:hover { opacity: 1; color: #d4af37; }
+        .social-links { display: flex; gap: 1rem; margin-top: 1rem; }
+        .social-links a { font-size: 1.5rem; transition: transform 0.3s ease; }
+        .social-links a:hover { transform: scale(1.2); }
+        .footer-bottom { text-align: center; padding-top: 2rem; border-top: 1px solid #333; opacity: 0.6; }
+        .designer-credit { margin-top: 0.5rem; font-size: 0.9rem; }
+        .designer-credit a { color: #d4af37; text-decoration: none; font-weight: 500; transition: all 0.3s ease; }
+        .designer-credit a:hover { color: #b8941f; text-decoration: underline; }
+        
+        @media (max-width: 1024px) { .auth-grid { grid-template-columns: 1fr; max-width: 500px; margin: 0 auto; } .auth-welcome { order: 2; padding: 2rem; } .auth-form-side { order: 1; padding: 2rem; } .welcome-content h1 { font-size: 2rem; } }
+        @media (max-width: 768px) { .hamburger { display: flex; } .nav-menu { position: fixed; left: -100%; top: 70px; flex-direction: column; background: white; width: 100%; text-align: center; transition: 0.3s; box-shadow: 0 10px 27px rgba(0, 0, 0, 0.05); padding: 2rem 0; } .nav-menu.active { left: 0; } .auth-section { padding: 80px 0 30px; } .form-row { grid-template-columns: 1fr; } }
+        @media (max-width: 480px) { .auth-welcome, .auth-form-side { padding: 1.5rem; } .welcome-content h1 { font-size: 1.8rem; } .form-header h2 { font-size: 1.5rem; } }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideInDown { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        .auth-form-container, .welcome-content { animation: fadeInUp 0.6s ease forwards; }
+        .form-group input.error { border-color: #dc3545; box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1); }
+        .form-group input.success { border-color: #28a745; box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.1); }
+        
+        @media (max-width: 768px) { button, .btn, .auth-btn, .nav-link, input[type="submit"], input[type="button"] { min-height: 44px; min-width: 44px; touch-action: manipulation; } body { font-size: 16px; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; } input, select, textarea { font-size: 16px; border-radius: 8px; padding: 1rem; } }
+        html { scroll-behavior: smooth; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <h2>Prince Alex Airbnb</h2>
+                <span>Uthiru, Nairobi</span>
+            </div>
+            <div class="nav-menu">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="listings.html" class="nav-link">Rooms</a>
+                <a href="about.html" class="nav-link">About</a>
+                <a href="contact.html" class="nav-link">Contact</a>
+                <a href="login.html" class="nav-link login-btn">Login</a>
+            </div>
+            <div class="hamburger"><span></span><span></span><span></span></div>
+        </div>
+    </nav>
+
+    <section class="auth-section">
+        <div class="auth-container">
+            <div class="auth-grid">
+                <div class="auth-welcome">
+                    <div class="welcome-content">
+                        <h1>Join Prince Alex Airbnb!</h1>
+                        <p>Create your account to unlock exclusive benefits and enjoy a seamless booking experience in the heart of Uthiru, Nairobi.</p>
+                        <div class="welcome-features">
+                            <div class="feature-item"><span class="feature-icon">🎯</span><span>Personalized recommendations</span></div>
+                            <div class="feature-item"><span class="feature-icon">💰</span><span>Exclusive member discounts</span></div>
+                            <div class="feature-item"><span class="feature-icon">📋</span><span>Easy booking management</span></div>
+                            <div class="feature-item"><span class="feature-icon">🔔</span><span>Special offers notifications</span></div>
+                        </div>
+                        <div class="auth-switch">
+                            <p>Already have an account?</p>
+                            <a href="login.html" class="switch-link">Sign in here</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="auth-form-side">
+                    <div class="auth-form-container">
+                        <div class="form-header">
+                            <h2>Create Account</h2>
+                            <p>Fill in your details to get started</p>
+                        </div>
+
+                        <form id="register-form" class="auth-form">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="firstName">First Name</label>
+                                    <input type="text" id="firstName" name="firstName" required>
+                                    <span class="error-message" id="firstName-error"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="lastName">Last Name</label>
+                                    <input type="text" id="lastName" name="lastName" required>
+                                    <span class="error-message" id="lastName-error"></span>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="email">Email Address</label>
+                                <input type="email" id="email" name="email" required>
+                                <span class="error-message" id="email-error"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="phone">Phone Number</label>
+                                <input type="tel" id="phone" name="phone" placeholder="+254 717 384 875">
+                                <span class="error-message" id="phone-error"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="password">Password</label>
+                                <div class="password-input">
+                                    <input type="password" id="password" name="password" required>
+                                    <button type="button" class="password-toggle" onclick="togglePassword('password')">
+                                        <span class="toggle-icon">👁️</span>
+                                    </button>
+                                </div>
+                                <div class="password-strength" id="password-strength">
+                                    <div class="strength-bar"><div class="strength-fill"></div></div>
+                                    <span class="strength-text">Password strength</span>
+                                </div>
+                                <span class="error-message" id="password-error"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="confirmPassword">Confirm Password</label>
+                                <div class="password-input">
+                                    <input type="password" id="confirmPassword" name="confirmPassword" required>
+                                    <button type="button" class="password-toggle" onclick="togglePassword('confirmPassword')">
+                                        <span class="toggle-icon">👁️</span>
+                                    </button>
+                                </div>
+                                <span class="error-message" id="confirmPassword-error"></span>
+                            </div>
+
+                            <div class="form-checkboxes">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="newsletter" name="newsletter">
+                                    <span class="checkmark"></span>
+                                    Subscribe to our newsletter for special offers and updates
+                                </label>
+
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="terms" name="terms" required>
+                                    <span class="checkmark"></span>
+                                    I agree to the Terms of Service and Privacy Policy
+                                </label>
+                                <span class="error-message" id="terms-error"></span>
+                            </div>
+
+                            <button type="submit" class="auth-btn">
+                                <span class="btn-text">Create Account</span>
+                                <span class="btn-loader" style="display: none;">Creating account...</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Prince Alex Airbnb</h3>
+                    <p>Your home away from home in Uthiru, Nairobi</p>
+                    <div class="social-links">
+                        <a href="#" aria-label="Facebook">📘</a>
+                        <a href="#" aria-label="Instagram">📷</a>
+                        <a href="#" aria-label="WhatsApp">📱</a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="listings.html">Rooms</a></li>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact Info</h4>
+                    <p>📍 Uthiru, Nairobi, Kenya</p>
+                    <p>📞 +254 717 384 875</p>
+                    <p>✉️ princealexdigital@gmail.com</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Prince Alex Airbnb. All rights reserved.</p>
+                <p class="designer-credit">Designed by <a href="https://www.princealex.pro" target="_blank" rel="noopener">Prince Alex Digital</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <div id="success-modal" class="modal">
+        <div class="modal-content">
+            <div class="success-header">
+                <div class="success-icon">🎉</div>
+                <h2>Account Created Successfully!</h2>
+                <p>Welcome to Prince Alex Airbnb family!</p>
+            </div>
+            <div class="success-details">
+                <div class="success-info">
+                    <p>✅ <strong>Account registered successfully</strong> - Your customer profile has been created</p>
+                    <p>🔐 <strong>Ready to sign in</strong> - Use your email and password to access your account</p>
+                    <p>🏠 <strong>Start exploring</strong> - Browse our beautiful rooms in Uthiru, Nairobi</p>
+                </div>
+                <div class="next-steps">
+                    <h4>What's Next?</h4>
+                    <p>Click the button below to go to the login page and sign in with your new account credentials.</p>
+                </div>
+            </div>
+            <div class="success-actions">
+                <button class="primary-btn" onclick="goToLogin()">Sign In Now</button>
+                <button class="secondary-btn" onclick="stayOnPage()">Register Another Account</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    
+    <script>
+        const firebaseConfig = { apiKey: "AIzaSyAUNs3WYS2mkvPvzRDfhyZFUbP2XpZjDQg", authDomain: "retailflow-pos-11726.firebaseapp.com", projectId: "retailflow-pos-11726", storageBucket: "retailflow-pos-11726.firebasestorage.app", messagingSenderId: "309314798354", appId: "1:309314798354:web:30784c2b2e7e42168629cb" };
+        let firebaseApp, auth, db, currentUser, isSubmitting = false, isRegistering = false;
+
+        function initializeFirebase() {
+            if (typeof firebase !== 'undefined') {
+                firebaseApp = firebase.initializeApp(firebaseConfig);
+                auth = firebase.auth();
+                db = firebase.firestore();
+                auth.onAuthStateChanged((user) => {
+                    currentUser = user;
+                    if (user && !isRegistering) {
+                        setTimeout(() => {
+                            showNotification('You are already logged in', 'info');
+                            setTimeout(() => window.location.href = 'profile.html', 1000);
+                        }, 500);
+                    }
+                });
+                return true;
+            }
+            return false;
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof firebase !== 'undefined') { initializeFirebase(); } else { setTimeout(() => initializeFirebase(), 1000); }
+            initializeMobileNavigation();
+            initializeFormValidation();
+            setupPasswordStrength();
+        });
+
+        function initializeMobileNavigation() {
+            const hamburger = document.querySelector('.hamburger');
+            const navMenu = document.querySelector('.nav-menu');
+            const body = document.body;
+            if (hamburger && navMenu) {
+                hamburger.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    navMenu.classList.toggle('active');
+                    hamburger.classList.toggle('active');
+                    body.style.overflow = navMenu.classList.contains('active') ? 'hidden' : 'auto';
+                });
+                document.querySelectorAll('.nav-link').forEach(link => {
+                    link.addEventListener('click', () => {
+                        navMenu.classList.remove('active');
+                        hamburger.classList.remove('active');
+                        body.style.overflow = 'auto';
+                    });
+                });
+            }
+        }
+
+        function initializeFormValidation() {
+            const form = document.getElementById('register-form');
+            const inputs = form.querySelectorAll('input[required]');
+            inputs.forEach(input => {
+                input.addEventListener('blur', () => validateField(input));
+                input.addEventListener('input', () => clearError(input));
+            });
+            const confirmPasswordInput = document.getElementById('confirmPassword');
+            if (confirmPasswordInput) { confirmPasswordInput.addEventListener('blur', validatePasswordConfirmation); }
+            form.addEventListener('submit', handleFormSubmit);
+        }
+
+        function setupPasswordStrength() {
+            const passwordInput = document.getElementById('password');
+            if (passwordInput) { passwordInput.addEventListener('input', updatePasswordStrength); }
+        }
+
+        function validateField(input) {
+            const errorElement = document.getElementById(`${input.id}-error`);
+            let isValid = true, errorMessage = '';
+            if (input.hasAttribute('required') && !input.value.trim()) { isValid = false; errorMessage = 'This field is required'; }
+            if (isValid && input.type === 'email' && input.value) {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(input.value)) { isValid = false; errorMessage = 'Please enter a valid email address'; }
+            }
+            if (errorElement) {
+                if (isValid) { errorElement.textContent = ''; errorElement.classList.remove('show'); input.classList.remove('error'); input.classList.add('success'); }
+                else { errorElement.textContent = errorMessage; errorElement.classList.add('show'); input.classList.add('error'); input.classList.remove('success'); }
+            }
+            return isValid;
+        }
+
+        function validatePasswordConfirmation() {
+            const passwordInput = document.getElementById('password');
+            const confirmPasswordInput = document.getElementById('confirmPassword');
+            const errorElement = document.getElementById('confirmPassword-error');
+            if (confirmPasswordInput.value !== passwordInput.value) {
+                errorElement.textContent = 'Passwords do not match';
+                errorElement.classList.add('show');
+                confirmPasswordInput.classList.add('error');
+                confirmPasswordInput.classList.remove('success');
+                return false;
+            } else {
+                errorElement.classList.remove('show');
+                confirmPasswordInput.classList.remove('error');
+                confirmPasswordInput.classList.add('success');
+                return true;
+            }
+        }
+
+        function updatePasswordStrength() {
+            const passwordInput = document.getElementById('password');
+            const strengthBar = document.querySelector('.strength-fill');
+            const strengthText = document.querySelector('.strength-text');
+            if (!strengthBar || !strengthText) return;
+            const password = passwordInput.value;
+            let strengthLabel = 'Enter password';
+            if (password.length === 0) {
+                strengthLabel = 'Enter password';
+                strengthBar.style.width = '0%';
+                strengthBar.className = 'strength-fill';
+            } else if (password.length >= 1) {
+                strengthLabel = 'Password accepted';
+                strengthBar.style.width = '100%';
+                strengthBar.className = 'strength-fill good';
+            }
+            strengthText.textContent = strengthLabel;
+        }
+
+        function clearError(input) {
+            const errorElement = document.getElementById(`${input.id}-error`);
+            if (errorElement) { errorElement.classList.remove('show'); input.classList.remove('error'); }
+        }
+
+        async function handleFormSubmit(event) {
+            event.preventDefault();
+            if (isSubmitting) return;
+            isRegistering = true;
+            const form = event.target;
+            const requiredInputs = form.querySelectorAll('input[required]');
+            let isValid = true;
+            requiredInputs.forEach(input => { if (!validateField(input)) { isValid = false; } });
+            if (!validatePasswordConfirmation()) { isValid = false; }
+            const termsCheckbox = document.getElementById('terms');
+            const termsError = document.getElementById('terms-error');
+            if (!termsCheckbox.checked) { termsError.textContent = 'You must agree to the terms and conditions'; termsError.classList.add('show'); isValid = false; } else { termsError.classList.remove('show'); }
+            if (!isValid) { showNotification('Please fill in all required fields correctly', 'error'); return; }
+            isSubmitting = true;
+            updateSubmitButton(true);
+            try {
+                const formData = new FormData(form);
+                const userCredential = await auth.createUserWithEmailAndPassword(formData.get('email'), formData.get('password'));
+                const user = userCredential.user;
+                await user.updateProfile({ displayName: `${formData.get('firstName')} ${formData.get('lastName')}`, photoURL: 'images/prince-alex.png' });
+                const userProfile = {
+                    uid: user.uid, email: formData.get('email'), firstName: formData.get('firstName'), lastName: formData.get('lastName'),
+                    phone: formData.get('phone') || '', avatar: 'images/prince-alex.png', createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    newsletter: formData.get('newsletter') === 'on', preferences: { language: 'en', currency: 'KES', notifications: { email: true, sms: false, marketing: false } },
+                    stats: { totalBookings: 0, totalSpent: 0, favoriteRooms: [], memberSince: firebase.firestore.FieldValue.serverTimestamp() },
+                    customerType: 'registered', lastLoginAt: firebase.firestore.FieldValue.serverTimestamp()
+                };
+                await db.collection('customers').doc(user.uid).set(userProfile);
+                await auth.signOut();
+                showSuccessModal();
+            } catch (error) {
+                showNotification(getFirebaseErrorMessage(error.code), 'error');
+                isRegistering = false;
+            }
+            isSubmitting = false;
+            updateSubmitButton(false);
+        }
+
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            const toggleIcon = input.parentElement.querySelector('.toggle-icon');
+            if (input.type === 'password') { input.type = 'text'; toggleIcon.textContent = '🙈'; } else { input.type = 'password'; toggleIcon.textContent = '👁️'; }
+        }
+
+        function updateSubmitButton(loading) {
+            const button = document.querySelector('.auth-btn');
+            const btnText = button.querySelector('.btn-text');
+            const btnLoader = button.querySelector('.btn-loader');
+            if (loading) { button.disabled = true; btnText.style.display = 'none'; btnLoader.style.display = 'inline-block'; }
+            else { button.disabled = false; btnText.style.display = 'inline-block'; btnLoader.style.display = 'none'; }
+        }
+
+        function showSuccessModal() { 
+            document.getElementById('success-modal').style.display = 'block'; 
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeSuccessModal() { 
+            document.getElementById('success-modal').style.display = 'none'; 
+            document.body.style.overflow = 'auto'; 
+        }
+        
+        function goToLogin() {
+            isRegistering = false;
+            closeSuccessModal();
+            showNotification('🔐 Redirecting to login page...', 'info');
+            setTimeout(() => { window.location.href = 'login.html'; }, 1000);
+        }
+        
+        function stayOnPage() {
+            isRegistering = false;
+            closeSuccessModal();
+            document.getElementById('register-form').reset();
+            showNotification('Form cleared - ready for another registration', 'info');
+        }
+
+        function getFirebaseErrorMessage(errorCode) {
+            switch (errorCode) {
+                case 'auth/email-already-in-use': return 'An account with this email already exists';
+                case 'auth/weak-password': return 'Password accepted! Please try a password with at least 6 characters for Firebase requirements.';
+                case 'auth/invalid-email': return 'Please enter a valid email address';
+                case 'auth/network-request-failed': return 'Network error. Please check your connection';
+                default: return 'An error occurred. Please try again';
+            }
+        }
+
+        function showNotification(message, type = 'info') {
+            const existingNotifications = document.querySelectorAll('.notification');
+            existingNotifications.forEach(notification => notification.remove());
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.innerHTML = `<div class="notification-content"><span class="notification-icon">${getNotificationIcon(type)}</span><span class="notification-message">${message}</span><button class="notification-close" onclick="this.parentElement.parentElement.remove()">&times;</button></div>`;
+            notification.style.cssText = `position: fixed; top: 100px; right: 20px; background: ${getNotificationColor(type)}; color: white; padding: 1rem; border-radius: 8px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); z-index: 10000; min-width: 300px; max-width: 400px; animation: slideInRight 0.3s ease;`;
+            const content = notification.querySelector('.notification-content');
+            content.style.cssText = `display: flex; align-items: center; gap: 10px;`;
+            const closeBtn = notification.querySelector('.notification-close');
+            closeBtn.style.cssText = `background: none; border: none; color: white; font-size: 1.2rem; cursor: pointer; margin-left: auto; padding: 0 5px;`;
+            document.body.appendChild(notification);
+            setTimeout(() => { if (notification.parentElement) { notification.style.animation = 'slideOutRight 0.3s ease'; setTimeout(() => notification.remove(), 300); } }, 5000);
+        }
+
+        function getNotificationIcon(type) { switch(type) { case 'success': return '✓'; case 'error': return '✗'; case 'warning': return '⚠'; default: return 'ℹ'; } }
+        function getNotificationColor(type) { switch(type) { case 'success': return '#28a745'; case 'error': return '#dc3545'; case 'warning': return '#ffc107'; default: return '#007bff'; } }
+
+        window.addEventListener('click', function(event) {
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => { 
+                if (event.target === modal && modal.id !== 'success-modal') { 
+                    modal.style.display = 'none'; 
+                    document.body.style.overflow = 'auto'; 
+                } 
+            });
+        });
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                const modals = document.querySelectorAll('.modal');
+                modals.forEach(modal => { 
+                    if (modal.style.display === 'block' && modal.id !== 'success-modal') { 
+                        modal.style.display = 'none'; 
+                        document.body.style.overflow = 'auto'; 
+                    } 
+                });
+            }
+        });
+
+        const style = document.createElement('style');
+        style.textContent = `@keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } } @keyframes slideOutRight { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }`;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

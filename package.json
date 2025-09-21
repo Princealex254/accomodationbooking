@@ -1,0 +1,16 @@
+{
+  "name": "prince-alex-airbnb",
+  "version": "1.0.0",
+  "description": "Prince Alex Airbnb - Modern accommodation booking website",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "keywords": ["airbnb", "booking", "accommodation", "nairobi", "kenya"],
+  "author": "Prince Alex Digital",
+  "license": "MIT"
+}
