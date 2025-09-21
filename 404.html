@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prince Alex Airbnb</title>
+    <style>
+        body { 
+            font-family: 'Arial', sans-serif; 
+            margin: 0; 
+            padding: 0; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            text-align: center;
+            background: white;
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            margin: 20px;
+        }
+        .loader {
+            margin: 20px auto;
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #d4af37;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        h1 { color: #1a365d; margin-bottom: 1rem; }
+        p { color: #666; margin-bottom: 1rem; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏨 Prince Alex Airbnb</h1>
+        <div class="loader"></div>
+        <p>Loading your page...</p>
+        <p id="redirect-info">Redirecting to the correct page...</p>
+    </div>
+
+    <script>
+        // GitHub Pages Clean URLs Handler
+        (function() {
+            const path = window.location.pathname;
+            const search = window.location.search;
+            
+            // Remove trailing slash if present
+            const cleanPath = path.replace(/\/$/, '');
+            
+            // List of valid pages
+            const validPages = [
+                '/admin', '/login', '/register', '/listings', '/property', 
+                '/booking', '/profile', '/about', '/contact', '/mobile-test', '/test-clean-urls'
+            ];
+            
+            // Check if this is a clean URL request
+            if (validPages.includes(cleanPath)) {
+                const targetUrl = cleanPath + '.html' + search;
+                console.log('🔄 Redirecting to:', targetUrl);
+                document.getElementById('redirect-info').textContent = `Redirecting to ${cleanPath}...`;
+                window.location.replace(targetUrl);
+                return;
+            }
+            
+            // If not a valid clean URL, show 404
+            document.querySelector('.container').innerHTML = `
+                <h1>🏨 Prince Alex Airbnb</h1>
+                <h2>Page Not Found</h2>
+                <p>Sorry, the page you're looking for doesn't exist.</p>
+                <a href="/" style="
+                    display: inline-block;
+                    background: #d4af37;
+                    color: white;
+                    padding: 12px 24px;
+                    text-decoration: none;
+                    border-radius: 25px;
+                    margin-top: 20px;
+                    transition: all 0.3s ease;
+                " onmouseover="this.style.background='#b8941f'" onmouseout="this.style.background='#d4af37'">
+                    ← Return to Home
+                </a>
+            `;
+        })();
+    </script>
+</body>
+</html>
